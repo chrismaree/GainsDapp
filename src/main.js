@@ -1,0 +1,26 @@
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store'
+import './registerServiceWorker'
+import VueMaterial from 'vue-material'
+import VModal from 'vue-js-modal'
+import Jazzicon from 'vue-jazzicon';
+import VueApexCharts from 'vue-apexcharts'
+
+import 'vue-material/dist/vue-material.min.css'
+import "typeface-space-mono";
+
+Vue.component('apexchart', VueApexCharts)
+Vue.component('jazzicon', Jazzicon);
+
+Vue.use(VueMaterial)
+Vue.use(VModal)
+
+Vue.config.productionTip = false
+
+new Vue({
+  router,
+  store,
+  render: h => h(App)
+}).$mount('#app')
