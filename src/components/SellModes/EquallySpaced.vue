@@ -5,49 +5,59 @@
         <p>
           <span
             class="md-caption"
-          >Sell all ether over a set of equally space sells from a chosen starting price.</span>
+          >Sell all ether over a set of equally space equal sells from a chosen starting price.</span>
         </p>
       </div>
     </div>
 
     <div class="md-layout">
-      <div class="md-layout-item">
+      <div class="md-layout-item md-size-20">
         <md-field>
           <label>Starting price</label>
           <md-input v-model="startingPrice" type="number"></md-input>
         </md-field>
       </div>
       <div class="md-layout-item">
-        <vue-slider v-model="startingPrice" :min="200" :max="2000" :adsorb="true" :interval="10"/>
+        <br>
+        <vue-slider
+          v-model="startingPrice"
+          :min="usdPrice"
+          :max="2000"
+          :adsorb="true"
+          :interval="10"
+        />
       </div>
     </div>
     <div class="md-layout">
-      <div class="md-layout-item">
+      <div class="md-layout-item md-size-20">
         <md-field>
           <label>Number of steps</label>
           <md-input v-model="numberOfSteps" type="number"></md-input>
         </md-field>
       </div>
       <div class="md-layout-item">
+        <br>
         <vue-slider v-model="numberOfSteps" :adsorb="true" :interval="1" :min="2" :max="20"/>
       </div>
     </div>
     <div class="md-layout">
-      <div class="md-layout-item">
+      <div class="md-layout-item md-size-20">
         <md-field>
           <label>Price Per Steps</label>
           <md-input v-model="pricePerStep" type="number"></md-input>
         </md-field>
       </div>
       <div class="md-layout-item">
+        <br>
         <vue-slider v-model="pricePerStep" :min="50" :max="500" :adsorb="true" :interval="10"/>
       </div>
       {{sellSteps}}
-      
     </div>
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "equallySpaced",
   data: () => ({
@@ -57,7 +67,7 @@ export default {
   }),
   computed: {
     sellSteps() {
-      let sells = { steps: [], percentage: []};
+      let sells = { steps: [], percentage: [] };
       for (let i = 0; i < this.numberOfSteps; i++) {
         let sellPrice = this.startingPrice + i * this.pricePerStep;
         sells.steps.push(sellPrice);
@@ -74,7 +84,8 @@ export default {
 
       this.$emit("sellSteps", sells);
       return sells;
-    }
+    },
+    ...mapState(["usdPrice"])
   }
 };
 </script>

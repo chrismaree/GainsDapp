@@ -6,11 +6,14 @@
     <p>Spesify all the details of your automatic market selling smart contract</p>
     <div class="md-layout md-gutter">
       <div class="md-layout-item">
-        {{sellMode}}
+        <md-field>
+          <label>Ether to sell</label>
+          <md-input v-model="etherToSell" type="number"></md-input>
+        </md-field>
         <md-field>
           <label for="sellMode">Sell function</label>
           <md-select v-model="sellMode" name="sellMode" id="sellMode">
-            <md-option value="equal-spaced">Equal Spaced</md-option>
+            <md-option value="equal-spaced">Equal Spaced, equal sells</md-option>
             <md-option value="exponential">Exponential</md-option>
             <md-option value="fixed-Return">Fixed Returns</md-option>
           </md-select>
@@ -18,14 +21,10 @@
         <equally-spaced v-if="sellMode == 'equal-spaced'" @sellSteps="sellSteps"/>
       </div>
       <div class="md-layout-item">
-        <div v-if="plotValues!=null">
-          <apexchart type="line" :options="plotValues.chartOptions" :series="plotValues.series"/>
-          {{plotValues.series}}
-          {{plotValues.series}}
+        <div v-if="plotData!=null">
+          <md-switch v-model="showTotal" value="1">Show Cumulative Value</md-switch>
+          <vue-plotly :data="plotData" :layout="plotLayout" :options="plotOptions"/>
         </div>
-        <!-- {{series}} -->
-        {{usdPrice}}
-        <hr>
       </div>
     </div>
   </div>
@@ -34,14 +33,19 @@
 <script>
 import ClickableAddress from "@/components/widgets/ClickableAddress";
 import EquallySpaced from "@/components/SellModes/EquallySpaced";
+import VuePlotly from "@statnett/vue-plotly";
+
 import { mapActions, mapState } from "vuex";
 
 export default {
   name: "create",
-  components: { ClickableAddress, EquallySpaced },
+  components: { ClickableAddress, EquallySpaced, VuePlotly },
   data: () => ({
+    etherToSell: 5,
     sellMode: "equal-spaced",
-    sellStepsObject: {}
+    sellStepsObject: {},
+    plotOptions: { responsive: true, showLink: false, displayModeBar: false },
+    showTotal: false
   }),
   methods: {
     sellSteps(steps) {
@@ -53,66 +57,151 @@ export default {
     }
   },
   computed: {
-    plotValues() {
+    plotLayout() {
+      let xtick =
+        (this.sellStepsObject.steps[this.sellStepsObject.steps.length - 1] -
+          this.sellStepsObject.steps[0]) /
+        10;
+      console.log("TICK");
+      console.log(xtick);
+      return {
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        xaxis: {
+          title: "Ether Price",
+          gridcolor: "#bdbdbd",
+          dtick: xtick
+        },
+        yaxis: {
+          title: "Percentage Sold(%)",
+          gridcolor: "#bdbdbd",
+          dtick: 10
+        },
+        yaxis2: {
+          title: "Total Value Sold(USD)",
+          overlaying: "y",
+          side: "right",
+          autorange: true,
+          showgrid: false,
+          zeroline: false,
+          showline: false,
+          autotick: true,
+          ticks: "",
+          showticklabels: false
+        },
+        margin: {
+          l: 40,
+          r: 55,
+          b: 55,
+          t: 0,
+          pad: 5
+        },
+        shapes: [
+          {
+            type: "line",
+            x0: this.usdPrice,
+            y0: 0,
+            x1: this.usdPrice,
+            y1: 100,
+            line: {
+              color: "red",
+              width: 3
+            }
+          }
+        ],
+        showlegend: false
+      };
+    },
+    plotData() {
       if (this.sellStepsObject.percentage) {
-        let numberOfSteps = this.sellStepsObject.steps.length;
-        let cumulativePercent = [];
-        console.log("AAAAAA");
-        console.log(this.sellStepsObject);
-        cumulativePercent.push(0);
-        for (let i = 1; i < this.sellStepsObject.steps.length; i++) {
+        let numberOfSteps = this.sellStepsObject.percentage.length;
+        let cumulativePercent = [0];
+        let cumulativeValue = [0];
+
+        for (let i = 1; i < numberOfSteps; i++) {
           cumulativePercent.push(
             cumulativePercent[i - 1] + this.sellStepsObject.percentage[i]
           );
+          cumulativeValue.push(
+            ((this.etherToSell * cumulativePercent[i - 1]) / 100) *
+              this.sellStepsObject.steps[i]
+          );
         }
 
-        let xaxisSeries = [this.usdPrice, ...this.sellStepsObject.steps];
-        return {
-          series: [{ data: cumulativePercent }],
-          chartOptions: {
-            download: false,
-            chart: {
-              zoom: {
-                enabled: false
-              },
-              toolbar: {
-                show: false
-              }
+        cumulativePercent.push(100);
+        cumulativePercent.push(100);
+
+        // cumulativeValue.push(
+        //   ((this.etherToSell * cumulativePercent[numberOfSteps - 1]) / 100) *
+        //     this.sellStepsObject.steps[numberOfSteps - 1]
+        // );
+
+        cumulativeValue.push(
+          ((this.etherToSell * cumulativePercent[numberOfSteps]) / 100) *
+            this.sellStepsObject.steps[numberOfSteps - 1]
+        );
+
+        cumulativeValue.push(
+          ((this.etherToSell * cumulativePercent[numberOfSteps]) / 100) *
+            this.sellStepsObject.steps[numberOfSteps - 1]
+        );
+
+        let xaxisSeries = [
+          this.usdPrice - 100,
+          ...this.sellStepsObject.steps,
+          this.sellStepsObject.steps[numberOfSteps - 1] * 1.1
+        ];
+        console.log("X-values");
+        console.log(cumulativeValue);
+
+        console.log("CUM");
+        console.log(cumulativePercent);
+        console.log(cumulativePercent[numberOfSteps]);
+
+        if (this.showTotal) {
+          return [
+            {
+              x: xaxisSeries,
+              y: cumulativePercent,
+              mode: "lines+markers",
+              name: "Percent Sold",
+              line: { shape: "hv" },
+              type: "scatter"
             },
-            dataLabels: {
-              enabled: true
+            {
+              x: xaxisSeries,
+              y: cumulativeValue,
+              yaxis: "y2",
+              mode: "lines+markers",
+              name: "Value Sold",
+              line: { shape: "hv" },
+              type: "scatter"
             },
-            stroke: {
-              curve: "stepline"
-            },
-            grid: {
-              row: {
-                colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
-                opacity: 0.5
-              }
-            },
-            xaxis: {
-              categories: xaxisSeries
-            },
-            annotations: {
-              xaxis: [
-                {
-                  x: 50,
-                  strokeDashArray: 0,
-                  borderColor: "#775DD0",
-                  label: {
-                    borderColor: "#775DD0",
-                    style: {
-                      color: "#fff",
-                      background: "#775DD0"
-                    },
-                    text: "Current Price"
-                  }
-                }
-              ]
+            {
+              x: [this.usdPrice + 300],
+              y: [50],
+              text: ["Current price"],
+              mode: "text"
             }
-          }
-        };
+          ];
+        } else {
+          return [
+            {
+              x: xaxisSeries,
+              y: cumulativePercent,
+              mode: "lines+markers",
+              name: "Percent Sold",
+              line: { shape: "hv" },
+              type: "scatter"
+            },
+            {
+              x: [this.usdPrice + 300],
+              y: [50],
+              text: ["Current price"],
+              mode: "text"
+            }
+          ];
+        }
       }
       return null;
     },
