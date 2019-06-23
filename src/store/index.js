@@ -37,7 +37,8 @@ export default new Vuex.Store({
     //not using the .json address as migrations are not fully compleat so was easier
     // to deploy via remix
     // factoryAddress: '0x4f99d249039579e40a91a25815e6256c4710ccba',
-    setUserFunds: []
+    setUserFunds: [],
+    usdPrice: 300
   },
   mutations: {
     //WEB3 Stuff
@@ -52,6 +53,9 @@ export default new Vuex.Store({
     },
     [mutations.SET_WEB3]: async function (state, web3) {
       state.web3 = web3;
+    },
+    [mutations.SET_USD_PRICE](state, price) {
+      state.usdPrice = price;
     },
   },
   actions: {
