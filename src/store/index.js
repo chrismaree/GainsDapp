@@ -16,7 +16,7 @@ import getTokenInfo from "@/utils/TokenInfo.js"
 import * as actions from "./actions";
 import * as mutations from "./mutation-types";
 
-import truffleContract from "truffle-contract";
+// import truffleContract from "truffle-contract";
 
 // import FundFactoryABI from "../../build/contracts/FundFactory.json"
 // import FundABI from "../../build/contracts/Fund.json"
@@ -32,11 +32,6 @@ export default new Vuex.Store({
     currentNetwork: null,
     etherscanBase: null,
     TokenInfo: null,
-    // numberOfFunds: null,
-    //for now we pull this directly from the address. this is deployed on rinkeby
-    //not using the .json address as migrations are not fully compleat so was easier
-    // to deploy via remix
-    // factoryAddress: '0x4f99d249039579e40a91a25815e6256c4710ccba',
     setUserFunds: [],
     usdPrice: 300
   },
@@ -82,9 +77,9 @@ export default new Vuex.Store({
       // Set the web3 instance
       console.log("IN STORE")
       console.log(web3)
-      commit(mutations.SET_WEB3, {
-        web3
-      });
+      // commit(mutations.SET_WEB3, {
+      //   web3
+      // });
       console.log("set")
 
       dispatch(actions.GET_CURRENT_NETWORK);

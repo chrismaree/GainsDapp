@@ -5,7 +5,7 @@
         <p>
           <span
             class="md-caption"
-          >Sell all ether over a set of equally space equal sells from a chosen starting price.</span>
+          >Sell all ether over a set of equally space equal sells from a chosen starting price. Value from each sell will increase as the price goes up.</span>
         </p>
       </div>
     </div>
@@ -25,6 +25,7 @@
           :max="2000"
           :adsorb="true"
           :interval="10"
+          :tooltip="'always'"
         />
       </div>
     </div>
@@ -37,7 +38,14 @@
       </div>
       <div class="md-layout-item">
         <br>
-        <vue-slider v-model="numberOfSteps" :adsorb="true" :interval="1" :min="2" :max="20"/>
+        <vue-slider
+          v-model="numberOfSteps"
+          :adsorb="true"
+          :interval="1"
+          :min="2"
+          :tooltip="'always'"
+          :max="20"
+        />
       </div>
     </div>
     <div class="md-layout">
@@ -49,10 +57,17 @@
       </div>
       <div class="md-layout-item">
         <br>
-        <vue-slider v-model="pricePerStep" :min="50" :max="500" :adsorb="true" :interval="10"/>
+        <vue-slider
+          v-model="pricePerStep"
+          :min="50"
+          :max="500"
+          :adsorb="true"
+          :tooltip="'always'"
+          :interval="10"
+        />
       </div>
-      {{sellSteps}}
     </div>
+    {{sellSteps}}
   </div>
 </template>
 <script>
@@ -76,14 +91,8 @@ export default {
       let arrSum = sells.percentage.reduce((a, b) => a + b, 0);
       let diff = 100.0 - arrSum;
       sells.percentage[this.numberOfSteps - 1] += diff;
-
-      console.log("diff");
-      console.log(diff);
-      console.log("LAST");
-      console.log(sells.percentage[sells.percentage.length]);
-
       this.$emit("sellSteps", sells);
-      return sells;
+      return "";
     },
     ...mapState(["usdPrice"])
   }

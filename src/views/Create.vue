@@ -1,9 +1,9 @@
 <template>
   <div class="page-container">
     <div class="md-layout">
-      <h1>Create a sell Contract</h1>
+      <h1>Create a sell contract</h1>
     </div>
-    <p>Spesify all the details of your automatic market selling smart contract</p>
+    <p>Add your preferences to create an automatic market selling smart contract. There are a tone of different configurations to choose from. Experiment and see what the sell orders will look like with the interactive graph 🚀!</p>
     <div class="md-layout md-gutter">
       <div class="md-layout-item">
         <md-field>
@@ -109,6 +109,18 @@ export default {
             }
           }
         ],
+        annotations: [
+          {
+            x: this.usdPrice + 50,
+            y: 50,
+            xref: "x",
+            yref: "y",
+            text: "Current Ether Price",
+            ax: 0,
+            ay: -40,
+            textangle: "90"
+          }
+        ],
         showlegend: false
       };
     },
@@ -176,12 +188,6 @@ export default {
               name: "Value Sold",
               line: { shape: "hv" },
               type: "scatter"
-            },
-            {
-              x: [this.usdPrice + 300],
-              y: [50],
-              text: ["Current price"],
-              mode: "text"
             }
           ];
         } else {
@@ -193,12 +199,6 @@ export default {
               name: "Percent Sold",
               line: { shape: "hv" },
               type: "scatter"
-            },
-            {
-              x: [this.usdPrice + 300],
-              y: [50],
-              text: ["Current price"],
-              mode: "text"
             }
           ];
         }
