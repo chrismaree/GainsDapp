@@ -82,16 +82,16 @@ export default {
           overlaying: "y",
           side: "right",
           autorange: true,
-          showgrid: false,
+          showgrid: true,
           zeroline: false,
           showline: false,
           autotick: true,
           ticks: "",
-          showticklabels: false
+          showticklabels: true
         },
         margin: {
           l: 40,
-          r: 55,
+          r: 55 * this.showTotal,
           b: 55,
           t: 0,
           pad: 5
