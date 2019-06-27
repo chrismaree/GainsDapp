@@ -1,0 +1,14 @@
+{
+  "contractName": "gainsbot_factory",
+  "abi": [],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourcePath": "/Users/chris/Projects/GainsDapp/contracts/gainsbot_factory.vy",
+  "compiler": {
+    "name": "vyper",
+    "version": "0.1.0b10"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.2",
+  "updatedAt": "2019-06-24T07:40:23.279Z"
+}
