@@ -12,9 +12,17 @@
           <md-input v-model="etherToSell" type="number"></md-input>
         </md-field>
         <step-size @sellSteps="sellSteps"/>
+        <div v-if="finalValues!=null">
+          <h3>Total value sold:${{finalValues.total.toFixed(2)}}</h3>
+          <h3>Final sell price:${{finalValues.price.toFixed(2)}}</h3>
+          <h3>Avg price/Eth:{{finalValues.total.toFixed(2)/etherToSell}}</h3>
+        </div>
+
+        <h2></h2>
       </div>
       <div class="md-layout-item">
         <div v-if="plotData!=null && etherToSell!=0">
+          <h2>Trade size and % sold against Ether price</h2>
           <vue-plotly :data="plotData" :layout="plotLayout" :options="plotOptions"/>
         </div>
         <div v-if="etherToSell==0">
@@ -249,6 +257,16 @@ export default {
           });
         }
         return trades;
+      }
+      return null;
+    },
+    finalValues() {
+      if (this.sellStepsObject.percentage) {
+        let numberOfSteps = this.sellStepsObject.percentage.length;
+        return {
+          total: this.tableData[numberOfSteps - 1].cumUSDSold,
+          price: this.tableData[numberOfSteps - 1].sellPriceUSD
+        };
       }
       return null;
     },
