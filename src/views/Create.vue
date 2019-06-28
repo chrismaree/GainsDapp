@@ -15,7 +15,7 @@
         <div v-if="finalValues!=null">
           <h3>Total value sold:${{finalValues.total.toFixed(2)}}</h3>
           <h3>Final sell price:${{finalValues.price.toFixed(2)}}</h3>
-          <h3>Avg price/Eth:{{finalValues.total.toFixed(2)/etherToSell}}</h3>
+          <h3>Avg USD/Eth:{{(finalValues.total/etherToSell).toFixed(2)}}</h3>
         </div>
 
         <h2></h2>
