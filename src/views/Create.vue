@@ -4,29 +4,31 @@
       <h1>Create a sell contract</h1>
     </div>
     <p>Add your preferences to create an automatic market selling smart contract. There are a tone of different configurations to choose from. Experiment and see what the sell orders will look like with the interactive graph 🚀!</p>
-
+    {{sellStepsObject}}
     <div class="md-layout md-gutter">
       <div class="md-layout-item">
+        <md-field>
+          <label for="mode">Select sell contract sell function type</label>
+          <md-select v-model="mode" name="mode" id="mode">
+            <md-option value="pick">Choose Start, End, Steps</md-option>
+            <md-option value="custom">Custom Sell Function</md-option>
+          </md-select>
+        </md-field>
+
+        <custom-function @sellSteps="sellSteps" v-if="mode=='custom'" />
+        <fixed-function @sellSteps="sellSteps" v-if="mode=='pick'" />
         <md-field>
           <label>Ether to sell</label>
           <md-input v-model="etherToSell" type="number"></md-input>
         </md-field>
-        <step-size @sellSteps="sellSteps"/>
-        <div v-if="finalValues!=null">
-          <h3>Total value sold:${{finalValues.total.toFixed(2)}}</h3>
-          <h3>Final sell price:${{finalValues.price.toFixed(2)}}</h3>
-          <h3>Avg USD/Eth:{{(finalValues.total/etherToSell).toFixed(2)}}</h3>
-        </div>
-
-        <h2></h2>
       </div>
       <div class="md-layout-item">
         <div v-if="plotData!=null && etherToSell!=0">
           <h2>Trade size and % sold against Ether price</h2>
-          <vue-plotly :data="plotData" :layout="plotLayout" :options="plotOptions"/>
+          <vue-plotly :data="plotData" :layout="plotLayout" :options="plotOptions" />
         </div>
         <div v-if="etherToSell==0">
-          <br>
+          <br />
           <md-empty-state
             md-rounded
             md-icon="account_balance_wallet"
@@ -36,7 +38,22 @@
         </div>
       </div>
     </div>
-    <br>
+    <hr />
+    {{finalValues}}
+    <div v-if="finalValues!=null">
+      <div class="md-layout md-alignment-top-center md-gutter">
+        <div class="md-layout-item">
+          <h3>Final sell price:${{finalValues.price.toFixed(2)}}</h3>
+        </div>
+        <div class="md-layout-item">
+          <h3>Total value sold:${{finalValues.total.toFixed(2)}}</h3>
+        </div>
+        <div class="md-layout-item">
+          <h3>Avg USD/Eth:{{(finalValues.total/etherToSell).toFixed(2)}}</h3>
+        </div>
+      </div>
+    </div>
+    <br />
     <md-table style=": blue">
       <md-table-row>
         <md-table-head md-numeric>#</md-table-head>
@@ -63,18 +80,20 @@
 
 <script>
 import ClickableAddress from "@/components/widgets/ClickableAddress";
-import StepSize from "@/components/StepSize";
+import CustomFunction from "@/components/CustomFunction";
+import FixedFunction from "@/components/FixedFunction";
 import VuePlotly from "@statnett/vue-plotly";
 
 import { mapActions, mapState } from "vuex";
 
 export default {
   name: "create",
-  components: { ClickableAddress, StepSize, VuePlotly },
+  components: { ClickableAddress, CustomFunction, FixedFunction, VuePlotly },
   data: () => ({
     etherToSell: 5,
     sellStepsObject: {},
-    plotOptions: { responsive: true, showLink: false, displayModeBar: false }
+    plotOptions: { responsive: true, showLink: false, displayModeBar: false },
+    mode: "pick"
   }),
   methods: {
     sellSteps(steps) {
