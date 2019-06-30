@@ -4,7 +4,6 @@
       <h1>Create a sell contract</h1>
     </div>
     <p>Add your preferences to create an automatic market selling smart contract. There are a tone of different configurations to choose from. Experiment and see what the sell orders will look like with the interactive graph 🚀!</p>
-    {{sellStepsObject}}
     <div class="md-layout md-gutter">
       <div class="md-layout-item">
         <md-field>
@@ -99,8 +98,6 @@ export default {
     sellSteps(steps) {
       console.log("SELL STEPS");
       console.log(steps);
-      console.log(steps.steps);
-      //   this.series.data = steps.steps;
       this.sellStepsObject = steps;
     }
   },
@@ -190,28 +187,42 @@ export default {
     plotData() {
       if (this.sellStepsObject.percentage) {
         let numberOfSteps = this.sellStepsObject.percentage.length;
-        let cumulativePercent = [0];
+        let cumulativePercent = [];
+        let tradeValue = [];
 
-        let tradeValue = [0];
+        // cumulativePercent.push(this.sellStepsObject.percentage[0]);
+        // tradeValue.push(
+        //   ((this.etherToSell * this.sellStepsObject.percentage[0]) / 100) *
+        //     this.sellStepsObject.steps[0]
+        // );
 
-        for (let i = 1; i < numberOfSteps; i++) {
-          cumulativePercent.push(
-            cumulativePercent[i - 1] + this.sellStepsObject.percentage[i]
-          );
+        for (let i = 0; i < numberOfSteps; i++) {
+          if (i == 0) {
+            cumulativePercent.push(this.sellStepsObject.percentage[0]);
+            tradeValue.push(
+              ((this.etherToSell * this.sellStepsObject.percentage[0]) / 100) *
+                this.sellStepsObject.steps[0]
+            );
+          } else {
+            cumulativePercent.push(
+              cumulativePercent[i - 1] + this.sellStepsObject.percentage[i]
+            );
 
-          tradeValue.push(this.etherToSell * this.sellStepsObject.steps[i - 1]);
+            tradeValue.push(
+              ((this.etherToSell * this.sellStepsObject.percentage[i]) / 100) *
+                this.sellStepsObject.steps[i]
+            );
+          }
         }
 
-        cumulativePercent.push(100);
-        tradeValue.push(
-          this.etherToSell * this.sellStepsObject.steps[numberOfSteps - 1]
-        );
+        cumulativePercent.unshift(0);
+        tradeValue.unshift(0);
+        let xaxisSeries = this.sellStepsObject.steps;
+        xaxisSeries.unshift(this.usdPrice - 100);
 
-        let xaxisSeries = [
-          this.usdPrice - 100,
-          ...this.sellStepsObject.steps,
-          this.sellStepsObject.steps[numberOfSteps - 1] * 1.1
-        ];
+        
+        
+
         console.log("CUM");
         console.log(cumulativePercent);
         console.log(cumulativePercent[numberOfSteps]);
@@ -224,7 +235,7 @@ export default {
               line: { color: "transparent" }
             },
             type: "bar",
-            name: "Trade Size"
+            name: "Trade Size(USD)"
           },
           {
             x: xaxisSeries,
@@ -235,7 +246,7 @@ export default {
             },
             yaxis: "y2",
             mode: "lines+markers",
-            name: "Percent Sold",
+            name: "Percent Sold(ETH)",
             line: { shape: "hv" },
             type: "scatter"
           }

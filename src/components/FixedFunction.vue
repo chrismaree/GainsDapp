@@ -25,7 +25,7 @@
           :min="usdPrice"
           :max="1000"
           :adsorb="true"
-          :interval="10"
+          :interval="50"
           :tooltip="'always'"
         />
       </div>
@@ -44,7 +44,7 @@
           :min="usdPrice"
           :max="5000"
           :adsorb="true"
-          :interval="10"
+          :interval="50"
           :tooltip="'always'"
         />
       </div>
@@ -94,20 +94,28 @@ export default {
   computed: {
     sellSteps() {
       let sells = { steps: [], percentage: [] };
-      for (let i = 0; i < this.numberOfSteps + 1; i++) {
+      for (let i = 0; i < this.numberOfSteps; i++) {
         let stepSize =
-          (this.endingPrice - this.startingPrice) / this.numberOfSteps;
-        let sellPrice =
-          this.startingPrice + stepSize * Math.pow(i, this.increaseFactor);
+          (this.endingPrice - this.startingPrice) / (this.numberOfSteps - 1);
+        let sellPrice = this.startingPrice + stepSize * i;
         sells.steps.push(sellPrice);
-        if (this.sellMode == "constantSaleSize") {
-          sells.percentage.push(
-            +parseFloat(100 / this.numberOfSteps).toFixed(3)
-          );
-        }
-        if (this.sellMode == "constantReturnSize") {
-        }
+
+        sells.percentage.push(+parseFloat(100 / this.numberOfSteps).toFixed(3));
       }
+
+      if (this.sellMode == "constantReturnSize") {
+        let equalSales = [];
+        for (let i = 0; i < this.numberOfSteps; i++) {
+          equalSales[i] = 1 / sells.steps[i];
+        }
+        console.log("EQUAL");
+        console.log(equalSales);
+
+        let equalSalesSum = equalSales.reduce((a, b) => a + b, 0);
+        equalSales = equalSales.map(x => x * (100 / equalSalesSum));
+        sells.percentage = equalSales;
+      }
+      //make sure that if there is any missing percents we add them back to the last trade
       let arrSum = sells.percentage.reduce((a, b) => a + b, 0);
       let diff = 100.0 - arrSum;
       sells.percentage[this.numberOfSteps - 1] += diff;
