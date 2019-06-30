@@ -53,14 +53,14 @@
       </div>
     </div>
     <br />
-    <md-table style=": blue">
+    <md-table>
       <md-table-row>
         <md-table-head md-numeric>#</md-table-head>
         <md-table-head>Sell Percent</md-table-head>
         <md-table-head>Sell Price USD</md-table-head>
         <md-table-head>Sell Value USD</md-table-head>
         <md-table-head>Cumulative USD Sold</md-table-head>
-        <md-table-head>Sell Value ETH</md-table-head>
+        <md-table-head>Sell Value in ETH</md-table-head>
         <md-table-head>Cumulative ETH Sold</md-table-head>
       </md-table-row>
 

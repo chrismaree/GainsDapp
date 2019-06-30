@@ -18,7 +18,7 @@
         </md-field>
       </div>
       <div class="md-layout-item">
-        <br>
+        <br />
         <vue-slider
           v-model="startingPrice"
           :min="usdPrice"
@@ -37,7 +37,7 @@
         </md-field>
       </div>
       <div class="md-layout-item">
-        <br>
+        <br />
         <vue-slider
           v-model="numberOfSteps"
           :adsorb="true"
@@ -56,12 +56,32 @@
         </md-field>
       </div>
       <div class="md-layout-item">
-        <br>
+        <br />
 
         <vue-slider
           v-model="increaseFactor"
-          :min="0.5"
-          :max="1.5"
+          :min="0.1"
+          :max="2.0"
+          :adsorb="true"
+          :tooltip="'always'"
+          :interval="0.1"
+        />
+      </div>
+    </div>
+    <div class="md-layout">
+      <div class="md-layout-item md-size-30">
+        <md-field>
+          <label>Sale increase factor</label>
+          <md-input v-model="saleIncreaseFactor" type="number"></md-input>
+        </md-field>
+      </div>
+      <div class="md-layout-item">
+        <br />
+
+        <vue-slider
+          v-model="saleIncreaseFactor"
+          :min="-2"
+          :max="2"
           :adsorb="true"
           :tooltip="'always'"
           :interval="0.1"
@@ -76,7 +96,7 @@
         </md-field>
       </div>
       <div class="md-layout-item">
-        <br>
+        <br />
         <vue-slider
           v-model="pricePerStep"
           :min="50"
@@ -99,7 +119,8 @@ export default {
     startingPrice: 500,
     numberOfSteps: 10,
     pricePerStep: 200,
-    increaseFactor: 1
+    increaseFactor: 1,
+    saleIncreaseFactor: 0
   }),
   computed: {
     sellSteps() {
@@ -110,10 +131,16 @@ export default {
           this.pricePerStep * Math.pow(i, this.increaseFactor);
         sells.steps.push(sellPrice);
         sells.percentage.push(+parseFloat(100 / this.numberOfSteps).toFixed(3));
+        sells.percentage[i] =
+          sells.percentage[i] * Math.pow(i+1, this.saleIncreaseFactor);
       }
-      let arrSum = sells.percentage.reduce((a, b) => a + b, 0);
-      let diff = 100.0 - arrSum;
-      sells.percentage[this.numberOfSteps - 1] += diff;
+
+      let salesSum = sells.percentage.reduce((a, b) => a + b, 0);
+      sells.percentage = sells.percentage.map(x => x * (100 / salesSum));
+
+      // let arrSum = sells.percentage.reduce((a, b) => a + b, 0);
+      // let diff = 100.0 - arrSum;
+      // sells.percentage[this.numberOfSteps - 1] += diff;
       this.$emit("sellSteps", sells);
       return "";
     },
