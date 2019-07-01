@@ -32,26 +32,18 @@
           <div class="md-layout-item">
             <md-content style="padding: 20px;">
               <md-card-header>
-                <div class="md-title">Specify how much Ether you want to sell</div>
-              </md-card-header>
-              This value will be sent to your smart contract and will be traded for Dai at the prices you choose. Choose either an exact number of percentage of your total stash.
-              {{Math.round((etherSelectedToSell/etherBalance)*1000)/10}}
-              <div class="md-layout">
-                <div class="md-layout-item md-size-50">
-                  <md-radio
-                    v-model="inputMode"
-                    value="exact"
-                    @change="etherSelectedToSell = Math.round((percentageSelected/100*etherBalance*10))/10"
-                  >Exact number of Ether</md-radio>
-                </div>
-                <div class="md-layout-item md-size-50">
-                  <md-radio
-                    v-model="inputMode"
-                    value="percent"
-                    @change="percentageSelected = Math.round((etherSelectedToSell/etherBalance)*1000)/10"
-                  >Percent of stack</md-radio>
-                </div>
-              </div>
+                <div class="md-title">Ether to sell</div>
+              </md-card-header>This value will be sent to your smart contract and will be traded for Dai at the prices you choose. Choose either an exact number of percentage of your total stash.
+              <md-radio
+                v-model="inputMode"
+                value="exact"
+                @change="etherSelectedToSell = Math.round((percentageSelected/100*etherBalance*10))/10"
+              >Exact number of Ether</md-radio>
+              <md-radio
+                v-model="inputMode"
+                value="percent"
+                @change="percentageSelected = Math.round((etherSelectedToSell/etherBalance)*1000)/10"
+              >Percent of stack</md-radio>
               <div class="md-layout">
                 <div class="md-layout-item md-size-30">
                   Your ballance:
@@ -107,7 +99,7 @@
                       />
                     </div>
                   </div>
-                  <div class="md-layout-item">Ether to trade: Ξ{{percentageToTrade}}</div>
+                  <div class="md-layout-item">Ether to sell: Ξ{{valueFromPercentToTrade}}</div>
                 </div>
               </div>
             </md-content>
@@ -115,8 +107,76 @@
           <div class="md-layout-item">
             <md-content style="padding: 20px;">
               <md-card-header>
-                <div class="md-title">Sell ladder function</div>
+                <div class="md-title">Recipient Wallet</div>
               </md-card-header>
+              <p>Send ether back to your currently unlocked web3 wallet or to a different address, such as a hardware wallet💰.</p>
+
+              <md-radio v-model="wallet" value="own">Current wallet address</md-radio>
+              <md-radio v-model="wallet" value="other">Other address</md-radio>
+
+              <div class="md-layout">
+                <div class="md-layout-item md-size-50"></div>
+              </div>
+
+              <div class="md-layout-item md-size-70" v-if="wallet=='own'">
+                <clickable-address :light="false" :eth-address="account" style="margin-top:0px" />
+                <br />
+              </div>
+              <div class="md-layout-item md-size-70" v-if="wallet=='other'">
+                <md-field style="margin-top:0px">
+                  <label>Recipient Address</label>
+                  <md-input v-model="recipientAddress"></md-input>
+                </md-field>
+              </div>
+            </md-content>
+          </div>
+        </div>
+        <br />
+        <div class="md-layout md-gutter">
+          <div class="md-layout-item">
+            <md-content style="padding: 20px;">
+              <md-card-header>
+                <div class="md-title">Select token to sell into</div>
+              </md-card-header>
+              <p>
+                Each trade can be made to either Dai or cDai. Dai has a stable value of 1 USD and can be traded for other crypto currencies or exchanged for Fiat. cDai represents fractional ownership in a
+                <a
+                  href="https://compound.finance"
+                >Compound Finance</a> lending pool which means you start earning interest on your Dai immediately after a sale 🤘!
+              </p>
+              <md-radio v-model="daiMode" value="dai">Dai</md-radio>
+              <md-radio v-model="daiMode" value="cdai">cDai</md-radio>
+            </md-content>
+          </div>
+          <div class="md-layout-item">
+            <md-content style="padding: 20px;">
+              <md-card-header>
+                <div class="md-title">Configure commitment lock</div>
+              </md-card-header>
+              <p>All too often during a bull market people will cancel their sell orders on the way up. The commitment lock places a cool down on executing a withdraw or edit of trade settings. This makes it harder to back out once you've committed to your sell prices, ensuring that your crypto gets sold at the price you selected!</p>
+              <md-radio v-model="commitment" value="no">No Commitment lock</md-radio>
+              <md-radio v-model="commitment" value="lock">Set lock period</md-radio>
+
+              <div class="md-layout" v-if="commitment=='lock'">
+                <div class="md-layout-item md-size-40">
+                  <md-field>
+                    <label>Cool down on withdraw</label>
+                    <md-input v-model="coolDownOnWithdraw" type="number"></md-input>
+                  </md-field>
+                </div>
+                <div class="md-layout-item md-size-60">
+                  <br />
+                  <br />
+                  <vue-slider
+                    v-model="coolDownOnWithdraw"
+                    :min="1"
+                    :max="50"
+                    :interval="1"
+                    :adsorb="true"
+                    :tooltip="'always'"
+                  />
+                </div>
+              </div>
             </md-content>
           </div>
         </div>
@@ -248,12 +308,10 @@
               <md-table-cell>{{trade.cumEtherSold.toFixed(2)}}</md-table-cell>
             </md-table-row>
           </md-table>
-          <hr />If you are happy with all your trades you can continue to deploying your contract review and deploy all your sell contract settings.
-          <br />
-          <br />
-          <md-button class="md-raised md-primary" @click="setDone('third', 'fourth')">Continue</md-button>
-          <md-button class="md-raised" @click="setDone('third', 'second')">Back</md-button>
         </md-content>
+        <br />
+        <md-button class="md-raised md-primary" @click="setDone('third', 'fourth')">Continue</md-button>
+        <md-button class="md-raised" @click="setDone('third', 'second')">Back</md-button>
       </md-step>
       <md-step
         id="fourth"
@@ -263,12 +321,12 @@
       >
         <md-content style="padding: 20px;">
           <md-card-header>
-            <div class="md-title">Review sell contract information and deploy contract</div>
+            <div class="md-title">Review sell contract information and deploy contract!</div>
           </md-card-header>
-
-          <md-button class="md-raised md-primary" @click="console.log('AAAA')">Deploy</md-button>
-          <md-button class="md-raised" @click="setDone('fourth', 'third')">Back</md-button>
+          <p>Before deploying your sell contract you can review all key information. You will always be able to change these values later.</p>
         </md-content>
+        <md-button class="md-raised md-primary" @click="console.log('AAAA')">Deploy🚀!</md-button>
+        <md-button class="md-raised" @click="setDone('fourth', 'third')">Back</md-button>
       </md-step>
     </md-steppers>
 
@@ -300,7 +358,12 @@ export default {
     fourth: false,
     inputMode: "exact",
     etherBalance: 50.0191,
-    percentageSelected: 20
+    percentageSelected: 20,
+    wallet: "own",
+    recipientAddress: "0x",
+    daiMode: "dai",
+    commitment: "no",
+    coolDownOnWithdraw: 5
   }),
   methods: {
     sellSteps(steps) {
@@ -514,10 +577,10 @@ export default {
       }
       return null;
     },
-    percentageToTrade() {
+    valueFromPercentToTrade() {
       return ((this.percentageSelected / 100) * this.etherBalance).toFixed(4);
     },
-    ...mapState(["usdPrice"])
+    ...mapState(["usdPrice", "account"])
   }
 };
 </script>

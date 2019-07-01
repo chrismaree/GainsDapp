@@ -1,7 +1,19 @@
 <template>
   <div v-if="ethAddress" class="md-layout">
-    <jazzicon :address="ethAddress" :diameter="25"/>
-    <a class="eth-address md-subheading" :href="buildLink" target="_blank" style="color: white;">{{ dotDotDot }}</a>
+    <jazzicon :address="ethAddress" :diameter="25" />
+    <a
+      class="eth-address md-subheading"
+      :href="buildLink"
+      target="_blank"
+      style="color: white;"
+      v-if="light==true"
+    >{{ dotDotDot }}</a>
+    <a
+      class="eth-address md-subheading"
+      :href="buildLink"
+      target="_blank"
+      v-if="light==false"
+    >{{ dotDotDot }}</a>
   </div>
 </template>
 
@@ -15,6 +27,9 @@ export default {
   props: {
     ethAddress: {
       type: String
+    },
+    light: {
+      type: Boolean
     }
   },
   computed: {
@@ -46,7 +61,7 @@ export default {
 .eth-address {
   display: inline-block;
   padding: 0.125rem 0.25rem;
-  background: rgba($darkgray, 0.05);
+  // background: rgba($darkgray, 0.05);
 
   &:hover {
     background: rgba($darkgray, 0.1);

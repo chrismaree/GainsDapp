@@ -18,7 +18,7 @@
           </div>
           <div class="md-layout-item">
             <div class="md-subheading">
-              <clickable-address :eth-address="account"/>
+              <clickable-address :light="true" :eth-address="account"/>
             </div>
           </div>
         </div>
