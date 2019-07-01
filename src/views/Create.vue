@@ -7,24 +7,124 @@
         :md-done.sync="first"
         style="background: #F0F2F5; padding-left:0px; marin:0px; padding-right:0px;"
       >
-        <md-content style="padding: 20px;">
-          <md-card-header>
-            <div class="md-title">Create your own sell contract</div>
-          </md-card-header>
-          <p>Create your own custom sell contract by defining exact parameters to trigger your crypto sells. Each of the steps that follow will guide you in building your sell contract which will exit your position gradually over a range of prices as the Ether price increase.🌝</p>
-          <p>
-            At the end of the process a smart contract is deployed which will store your Ether and will trade automatically with
-            <a
-              href="https://uniswap.io"
-            >UniSwap</a> as and when the Ether price hits your sell targets. At any point in time you can deposit into or withdraw from from your sell contract, modify the sell prices and amounts or change other parameters.
-            To learn more about the implementation details check out the
-            <a
-              href="https://"
-            >Docs</a>.
-          </p>
-
-          <md-button class="md-raised md-primary" @click="setDone('first', 'second')">Continue</md-button>
-        </md-content>
+        <div class="md-layout">
+          <div class="md-layout-item">
+            <md-content style="padding: 20px;">
+              <md-card-header>
+                <div class="md-title">Create your own sell contract</div>
+              </md-card-header>
+              <p>Create your own custom sell contract by defining exact parameters to trigger your crypto sells. Each of the steps that follow will guide you in building your sell contract which will exit your position gradually over a range of prices as the Ether price increase.🌝</p>
+              <p>
+                At the end of the process a smart contract is deployed which will store your Ether and will trade automatically with
+                <a
+                  href="https://uniswap.io"
+                >UniSwap</a> as and when the Ether price hits your sell targets. At any point in time you can deposit into or withdraw from from your sell contract, modify the sell prices and amounts or change other parameters.
+                To learn more about the implementation details check out the
+                <a
+                  href="https://"
+                >Docs</a>.
+              </p>
+            </md-content>
+          </div>
+        </div>
+        <br />
+        <div class="md-layout md-gutter">
+          <div class="md-layout-item">
+            <md-content style="padding: 20px;">
+              <md-card-header>
+                <div class="md-title">Specify how much Ether you want to sell</div>
+              </md-card-header>
+              This value will be sent to your smart contract and will be traded for Dai at the prices you choose. Choose either an exact number of percentage of your total stash.
+              {{Math.round((etherSelectedToSell/etherBalance)*1000)/10}}
+              <div class="md-layout">
+                <div class="md-layout-item md-size-50">
+                  <md-radio
+                    v-model="inputMode"
+                    value="exact"
+                    @change="etherSelectedToSell = Math.round((percentageSelected/100*etherBalance*10))/10"
+                  >Exact number of Ether</md-radio>
+                </div>
+                <div class="md-layout-item md-size-50">
+                  <md-radio
+                    v-model="inputMode"
+                    value="percent"
+                    @change="percentageSelected = Math.round((etherSelectedToSell/etherBalance)*1000)/10"
+                  >Percent of stack</md-radio>
+                </div>
+              </div>
+              <div class="md-layout">
+                <div class="md-layout-item md-size-30">
+                  Your ballance:
+                  <br />
+                  Ξ{{etherBalance}}
+                  <br />
+                  <md-button
+                    class="md-dense md-primary"
+                    style="margin-left:0px;"
+                    @click="etherSelectedToSell = Math.round(etherBalance); percentageSelected=100"
+                  >Max</md-button>
+                </div>
+                <div class="md-layout-item md-size-70" v-if="inputMode=='exact'">
+                  <div class="md-layout">
+                    <div class="md-layout-item md-size-40">
+                      <md-field>
+                        <label>Ether to sell</label>
+                        <md-input v-model="etherSelectedToSell" type="number"></md-input>
+                      </md-field>
+                    </div>
+                    <div class="md-layout-item md-size-60">
+                      <br />
+                      <br />
+                      <vue-slider
+                        v-model="etherSelectedToSell"
+                        :min="0.1"
+                        :max="Math.round(etherBalance)"
+                        :interval="0.1"
+                        :adsorb="true"
+                        :tooltip="'always'"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="md-layout-item md-size-70" v-if="inputMode=='percent'">
+                  <div class="md-layout">
+                    <div class="md-layout-item md-size-40">
+                      <md-field>
+                        <label>Percentage of stack</label>
+                        <md-input v-model="percentageSelected" type="number"></md-input>
+                      </md-field>
+                    </div>
+                    <div class="md-layout-item md-size-60">
+                      <br />
+                      <br />
+                      <vue-slider
+                        v-model="percentageSelected"
+                        :min="0.1"
+                        :max="100"
+                        :interval="0.1"
+                        :adsorb="true"
+                        :tooltip="'always'"
+                      />
+                    </div>
+                  </div>
+                  <div class="md-layout-item">Ether to trade: Ξ{{percentageToTrade}}</div>
+                </div>
+              </div>
+            </md-content>
+          </div>
+          <div class="md-layout-item">
+            <md-content style="padding: 20px;">
+              <md-card-header>
+                <div class="md-title">Sell ladder function</div>
+              </md-card-header>
+            </md-content>
+          </div>
+        </div>
+        <md-button
+          class="md-raised md-primary"
+          @click="setDone('first', 'second'); etherToSell = etherSelectedToSell"
+          style="margin-top: 20px;"
+        >Continue</md-button>
       </md-step>
 
       <md-step
@@ -33,13 +133,15 @@
         md-label="Sell function"
         style="background: #F0F2F5; padding-left:0px; marin:0px; padding-right:0px;"
       >
-        <div class="md-layout" style>
-          <md-content style="padding: 20px;">
-            <md-card-header>
-              <div class="md-title">Sell ladder function</div>
-            </md-card-header>
-            <p>Add your preferences to create an automatic market selling smart contract. Specify how much ether you want to sell, and then select the sell ladder function you want to use. Experiment and see what the sell orders will look like with the interactive graph🚀!</p>
-          </md-content>
+        <div class="md-layout">
+          <div class="md-layout-item">
+            <md-content style="padding: 20px;">
+              <md-card-header>
+                <div class="md-title">Sell ladder function</div>
+              </md-card-header>
+              <p>Add your preferences to create an automatic market selling smart contract. Specify how much ether you want to sell, and then select the sell ladder function you want to use. Experiment and see what the sell orders will look like with the interactive graph🚀!</p>
+            </md-content>
+          </div>
         </div>
         <br />
         <div class="md-layout md-gutter">
@@ -58,10 +160,6 @@
 
               <custom-function @sellSteps="sellSteps" v-if="mode=='custom'" />
               <fixed-function @sellSteps="sellSteps" v-if="mode=='pick'" />
-              <md-field>
-                <label>Ether to sell</label>
-                <md-input v-model="etherToSell" type="number"></md-input>
-              </md-field>
             </md-content>
           </div>
           <div class="md-layout-item">
@@ -102,11 +200,19 @@
                 <br />
               </div>
             </div>
-            <hr />
-            <p>If you are happy with the look of your sell ladder you can continue to review the exact details of the trades that will be preformed.</p>
-            <md-button class="md-raised md-primary" @click="setDone('second', 'third')">Continue</md-button>
-            <md-button class="md-raised" @click="setDone('second', 'first')">Back</md-button>
+            <!-- <hr /> -->
+            <!-- <p>If you are happy with the look of your sell ladder you can continue to review the exact details of the trades that will be preformed.</p> -->
           </md-content>
+          <md-button
+            class="md-raised md-primary"
+            @click="setDone('second', 'third')"
+            style="margin-top: 20px;"
+          >Continue</md-button>
+          <md-button
+            class="md-raised"
+            @click="setDone('second', 'first')"
+            style="margin-top: 20px;"
+          >Back</md-button>
         </div>
       </md-step>
 
@@ -182,6 +288,7 @@ export default {
   name: "create",
   components: { ClickableAddress, CustomFunction, FixedFunction, VuePlotly },
   data: () => ({
+    etherSelectedToSell: 5,
     etherToSell: 5,
     sellStepsObject: {},
     plotOptions: { responsive: true, showLink: false, displayModeBar: false },
@@ -189,7 +296,11 @@ export default {
     active: "first",
     first: false,
     second: false,
-    third: false
+    third: false,
+    fourth: false,
+    inputMode: "exact",
+    etherBalance: 50.0191,
+    percentageSelected: 20
   }),
   methods: {
     sellSteps(steps) {
@@ -402,6 +513,9 @@ export default {
         };
       }
       return null;
+    },
+    percentageToTrade() {
+      return ((this.percentageSelected / 100) * this.etherBalance).toFixed(4);
     },
     ...mapState(["usdPrice"])
   }
