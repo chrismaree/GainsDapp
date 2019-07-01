@@ -1,12 +1,9 @@
 <template>
   <div class="page-container">
-    FFFF
     <div class="md-layout md-gutter">
       <div class="md-layout-item">
         <p>
-          <span
-            class="md-caption"
-          >Specify your start and end price and the number of steps you want in between. You can pick to have your sells run at a constant sale (constant in ETH) size or a constant sales return (constant in USD).⚖️</span>
+          <p>Specify your start and end price and the number of steps you want in between. You can pick to have your sells run at a constant sale (constant in ETH) size or a constant sales return (constant in USD).⚖️</p>
         </p>
       </div>
     </div>
@@ -18,7 +15,8 @@
           <md-input v-model="startingPrice" type="number"></md-input>
         </md-field>
       </div>
-      <div class="md-layout-item">
+      <div class="md-layout-item p-t-1">
+        <br />
         <br />
         <vue-slider
           v-model="startingPrice"
@@ -38,7 +36,7 @@
         </md-field>
       </div>
       <div class="md-layout-item">
-        <br />
+        <br /><br />
         <vue-slider
           v-model="endingPrice"
           :min="usdPrice"
@@ -57,7 +55,7 @@
         </md-field>
       </div>
       <div class="md-layout-item">
-        <br />
+        <br /><br />
         <vue-slider
           v-model="numberOfSteps"
           :adsorb="true"

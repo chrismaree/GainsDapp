@@ -3,9 +3,7 @@
     <div class="md-layout md-gutter">
       <div class="md-layout-item">
         <p>
-          <span
-            class="md-caption"
-          >Specify the size of the sells at each step. Choose the price you want to start selling at, the size per step and the increase(or decrease) per step. You can also choose the number of steps In total.📈</span>
+          <p>Specify the size of the sells at each step. Choose the price you want to start selling at, the size per step and the increase(or decrease) per step. You can also choose the number of steps In total.📈</p>
         </p>
       </div>
     </div>
@@ -18,6 +16,7 @@
         </md-field>
       </div>
       <div class="md-layout-item">
+        <br />
         <br />
         <vue-slider
           v-model="startingPrice"
@@ -38,6 +37,7 @@
       </div>
       <div class="md-layout-item">
         <br />
+        <br />
         <vue-slider
           v-model="numberOfSteps"
           :adsorb="true"
@@ -56,6 +56,7 @@
         </md-field>
       </div>
       <div class="md-layout-item">
+        <br />
         <br />
 
         <vue-slider
@@ -77,6 +78,7 @@
       </div>
       <div class="md-layout-item">
         <br />
+        <br />
 
         <vue-slider
           v-model="saleIncreaseFactor"
@@ -96,6 +98,7 @@
         </md-field>
       </div>
       <div class="md-layout-item">
+        <br />
         <br />
         <vue-slider
           v-model="pricePerStep"
@@ -132,7 +135,7 @@ export default {
         sells.steps.push(sellPrice);
         sells.percentage.push(+parseFloat(100 / this.numberOfSteps).toFixed(3));
         sells.percentage[i] =
-          sells.percentage[i] * Math.pow(i+1, this.saleIncreaseFactor);
+          sells.percentage[i] * Math.pow(i + 1, this.saleIncreaseFactor);
       }
 
       let salesSum = sells.percentage.reduce((a, b) => a + b, 0);

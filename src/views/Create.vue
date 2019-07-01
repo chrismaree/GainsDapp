@@ -1,79 +1,172 @@
 <template>
   <div class="page-container">
-    <div class="md-layout">
-      <h1>Create a sell contract</h1>
-    </div>
-    <p>Add your preferences to create an automatic market selling smart contract. There are a tone of different configurations to choose from. Experiment and see what the sell orders will look like with the interactive graph 🚀!</p>
-    <div class="md-layout md-gutter">
-      <div class="md-layout-item">
-        <md-field>
-          <label for="mode">Select sell contract sell function type</label>
-          <md-select v-model="mode" name="mode" id="mode">
-            <md-option value="pick">Choose Start, End, Steps</md-option>
-            <md-option value="custom">Custom Sell Function</md-option>
-          </md-select>
-        </md-field>
+    <md-steppers style="margin: 20px;" :md-active-step.sync="active" md-linear>
+      <md-step
+        id="first"
+        md-label="Information"
+        :md-done.sync="first"
+        style="background: #F0F2F5; padding-left:0px; marin:0px; padding-right:0px;"
+      >
+        <md-content style="padding: 20px;">
+          <md-card-header>
+            <div class="md-title">Create your own sell contract</div>
+          </md-card-header>
+          <p>Create your own custom sell contract by defining exact parameters to trigger your crypto sells. Each of the steps that follow will guide you in building your sell contract which will exit your position gradually over a range of prices as the Ether price increase.🌝</p>
+          <p>
+            At the end of the process a smart contract is deployed which will store your Ether and will trade automatically with
+            <a
+              href="https://uniswap.io"
+            >UniSwap</a> as and when the Ether price hits your sell targets. At any point in time you can deposit into or withdraw from from your sell contract, modify the sell prices and amounts or change other parameters.
+            To learn more about the implementation details check out the
+            <a
+              href="https://"
+            >Docs</a>.
+          </p>
 
-        <custom-function @sellSteps="sellSteps" v-if="mode=='custom'" />
-        <fixed-function @sellSteps="sellSteps" v-if="mode=='pick'" />
-        <md-field>
-          <label>Ether to sell</label>
-          <md-input v-model="etherToSell" type="number"></md-input>
-        </md-field>
-      </div>
-      <div class="md-layout-item">
-        <div v-if="plotData!=null && etherToSell!=0">
-          <h2>Trade size and % sold against Ether price</h2>
-          <vue-plotly :data="plotData" :layout="plotLayout" :options="plotOptions" />
+          <md-button class="md-raised md-primary" @click="setDone('first', 'second')">Continue</md-button>
+        </md-content>
+      </md-step>
+
+      <md-step
+        id="second"
+        :md-done.sync="second"
+        md-label="Sell function"
+        style="background: #F0F2F5; padding-left:0px; marin:0px; padding-right:0px;"
+      >
+        <div class="md-layout" style>
+          <md-content style="padding: 20px;">
+            <md-card-header>
+              <div class="md-title">Sell ladder function</div>
+            </md-card-header>
+            <p>Add your preferences to create an automatic market selling smart contract. Specify how much ether you want to sell, and then select the sell ladder function you want to use. Experiment and see what the sell orders will look like with the interactive graph🚀!</p>
+          </md-content>
         </div>
-        <div v-if="etherToSell==0">
+        <br />
+        <div class="md-layout md-gutter">
+          <div class="md-layout-item">
+            <md-content style="padding: 20px;">
+              <md-card-header>
+                <div class="md-title">Choose sale ladder function</div>
+              </md-card-header>
+              <md-field>
+                <label for="mode">Select sell contract sell function type</label>
+                <md-select v-model="mode" name="mode" id="mode">
+                  <md-option value="pick">Choose Start, End, Steps</md-option>
+                  <md-option value="custom">Custom Sell Function</md-option>
+                </md-select>
+              </md-field>
+
+              <custom-function @sellSteps="sellSteps" v-if="mode=='custom'" />
+              <fixed-function @sellSteps="sellSteps" v-if="mode=='pick'" />
+              <md-field>
+                <label>Ether to sell</label>
+                <md-input v-model="etherToSell" type="number"></md-input>
+              </md-field>
+            </md-content>
+          </div>
+          <div class="md-layout-item">
+            <md-content style="padding: 20px;">
+              <md-card-header>
+                <div class="md-title">Trade size and % sold</div>
+              </md-card-header>
+              <div v-if="plotData!=null && etherToSell!=0">
+                <vue-plotly :data="plotData" :layout="plotLayout" :options="plotOptions" />
+              </div>
+              <div v-if="etherToSell==0">
+                <br />
+                <md-empty-state
+                  md-rounded
+                  md-icon="account_balance_wallet"
+                  md-label="Enter the number of Ether to sell"
+                  md-description="Start off by entering how much Ether you want to sell."
+                ></md-empty-state>
+              </div>
+            </md-content>
+          </div>
+        </div>
+        <div v-if="finalValues!=null">
+          <md-content style="margin-top:22px; padding:30px">
+            <div class="md-layout md-alignment-top-center md-gutter">
+              <div class="md-layout-item">
+                <span class="md-subheading">Final sell price:${{finalValues.price.toFixed(2)}}</span>
+                <br />
+              </div>
+              <div class="md-layout-item">
+                <span class="md-subheading">Total value sold:${{finalValues.total.toFixed(2)}}</span>
+                <br />
+              </div>
+              <div class="md-layout-item md-alignment-center-right">
+                <span
+                  class="md-subheading"
+                >Average USD/Eth:${{(finalValues.total/etherToSell).toFixed(2)}}</span>
+                <br />
+              </div>
+            </div>
+            <hr />
+            <p>If you are happy with the look of your sell ladder you can continue to review the exact details of the trades that will be preformed.</p>
+            <md-button class="md-raised md-primary" @click="setDone('second', 'third')">Continue</md-button>
+            <md-button class="md-raised" @click="setDone('second', 'first')">Back</md-button>
+          </md-content>
+        </div>
+      </md-step>
+
+      <md-step
+        id="third"
+        :md-done.sync="third"
+        md-label="Review trades"
+        style="background: #F0F2F5; padding-left:0px; marin:0px; padding-right:0px;"
+      >
+        <md-content style="padding: 20px;">
+          <md-card-header>
+            <div class="md-title">Review all the trades</div>
+          </md-card-header>
+          <p>The table below shows all trades that will be preformed. Note that it is possible that your upper bound in trade price will not be reached and so the cumulative values are shown to show the net values at this price point.🔍</p>
+          <md-table>
+            <md-table-row>
+              <md-table-head md-numeric>#</md-table-head>
+              <md-table-head>Sell Percent</md-table-head>
+              <md-table-head>Sell Price USD</md-table-head>
+              <md-table-head>Sell Value USD</md-table-head>
+              <md-table-head>Cumulative USD Sold</md-table-head>
+              <md-table-head>Sell Value in ETH</md-table-head>
+              <md-table-head>Cumulative ETH Sold</md-table-head>
+            </md-table-row>
+
+            <md-table-row v-for="(trade,index) in tableData" :key="trade.index">
+              <md-table-cell md-numeric>{{index+1}}</md-table-cell>
+              <md-table-cell>{{trade.percentage.toFixed(2)}}</md-table-cell>
+              <md-table-cell>{{trade.sellPriceUSD.toFixed(2)}}</md-table-cell>
+              <md-table-cell>{{trade.sellValueUSD.toFixed(2)}}</md-table-cell>
+              <md-table-cell>{{trade.cumUSDSold.toFixed(2)}}</md-table-cell>
+              <md-table-cell>{{trade.ethSoldAtTrade.toFixed(2)}}</md-table-cell>
+              <md-table-cell>{{trade.cumEtherSold.toFixed(2)}}</md-table-cell>
+            </md-table-row>
+          </md-table>
+          <hr />If you are happy with all your trades you can continue to deploying your contract review and deploy all your sell contract settings.
           <br />
-          <md-empty-state
-            md-rounded
-            md-icon="account_balance_wallet"
-            md-label="Enter the number of Ether to sell"
-            md-description="Start off by entering how much Ether you want to sell."
-          ></md-empty-state>
-        </div>
-      </div>
-    </div>
-    <hr />
-    {{finalValues}}
-    <div v-if="finalValues!=null">
-      <div class="md-layout md-alignment-top-center md-gutter">
-        <div class="md-layout-item">
-          <h3>Final sell price:${{finalValues.price.toFixed(2)}}</h3>
-        </div>
-        <div class="md-layout-item">
-          <h3>Total value sold:${{finalValues.total.toFixed(2)}}</h3>
-        </div>
-        <div class="md-layout-item">
-          <h3>Avg USD/Eth:{{(finalValues.total/etherToSell).toFixed(2)}}</h3>
-        </div>
-      </div>
-    </div>
-    <br />
-    <md-table>
-      <md-table-row>
-        <md-table-head md-numeric>#</md-table-head>
-        <md-table-head>Sell Percent</md-table-head>
-        <md-table-head>Sell Price USD</md-table-head>
-        <md-table-head>Sell Value USD</md-table-head>
-        <md-table-head>Cumulative USD Sold</md-table-head>
-        <md-table-head>Sell Value in ETH</md-table-head>
-        <md-table-head>Cumulative ETH Sold</md-table-head>
-      </md-table-row>
+          <br />
+          <md-button class="md-raised md-primary" @click="setDone('third', 'fourth')">Continue</md-button>
+          <md-button class="md-raised" @click="setDone('third', 'second')">Back</md-button>
+        </md-content>
+      </md-step>
+      <md-step
+        id="fourth"
+        :md-done.sync="fourth"
+        md-label="Deploy"
+        style="background: #F0F2F5; padding-left:0px; marin:0px; padding-right:0px;"
+      >
+        <md-content style="padding: 20px;">
+          <md-card-header>
+            <div class="md-title">Review sell contract information and deploy contract</div>
+          </md-card-header>
 
-      <md-table-row v-for="(trade,index) in tableData" :key="trade.index">
-        <md-table-cell md-numeric>{{index+1}}</md-table-cell>
-        <md-table-cell>{{trade.percentage.toFixed(2)}}</md-table-cell>
-        <md-table-cell>{{trade.sellPriceUSD.toFixed(2)}}</md-table-cell>
-        <md-table-cell>{{trade.sellValueUSD.toFixed(2)}}</md-table-cell>
-        <md-table-cell>{{trade.cumUSDSold.toFixed(2)}}</md-table-cell>
-        <md-table-cell>{{trade.ethSoldAtTrade.toFixed(2)}}</md-table-cell>
-        <md-table-cell>{{trade.cumEtherSold.toFixed(2)}}</md-table-cell>
-      </md-table-row>
-    </md-table>
+          <md-button class="md-raised md-primary" @click="console.log('AAAA')">Deploy</md-button>
+          <md-button class="md-raised" @click="setDone('fourth', 'third')">Back</md-button>
+        </md-content>
+      </md-step>
+    </md-steppers>
+
+    <br />
   </div>
 </template>
 
@@ -92,13 +185,26 @@ export default {
     etherToSell: 5,
     sellStepsObject: {},
     plotOptions: { responsive: true, showLink: false, displayModeBar: false },
-    mode: "pick"
+    mode: "pick",
+    active: "first",
+    first: false,
+    second: false,
+    third: false
   }),
   methods: {
     sellSteps(steps) {
       console.log("SELL STEPS");
       console.log(steps);
       this.sellStepsObject = steps;
+    },
+    setDone(id, index) {
+      this[id] = true;
+
+      this.secondStepError = null;
+
+      if (index) {
+        this.active = index;
+      }
     }
   },
   computed: {
@@ -219,9 +325,6 @@ export default {
         tradeValue.unshift(0);
         let xaxisSeries = this.sellStepsObject.steps;
         xaxisSeries.unshift(this.usdPrice - 100);
-
-        
-        
 
         console.log("CUM");
         console.log(cumulativePercent);
