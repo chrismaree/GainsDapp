@@ -3,7 +3,7 @@
     <md-steppers style="margin: 20px;" :md-active-step.sync="active" md-linear>
       <md-step
         id="first"
-        md-label="Information"
+        md-label="Information & setup"
         :md-done.sync="first"
         style="background: #F0F2F5; padding-left:0px; marin:0px; padding-right:0px;"
       >
@@ -33,7 +33,7 @@
             <md-content style="padding: 20px;">
               <md-card-header>
                 <div class="md-title">Ether to sell</div>
-              </md-card-header>This value will be sent to your smart contract and will be traded for Dai at the prices you choose. Choose either an exact number of percentage of your total stash.
+              </md-card-header>This value will be sent to your smart contract and will be traded for Dai at the prices you choose. Choose either an exact number of percentage of your total stash💸.
               <md-radio
                 v-model="inputMode"
                 value="exact"
@@ -112,7 +112,7 @@
               <p>Send ether back to your currently unlocked web3 wallet or to a different address, such as a hardware wallet💰.</p>
 
               <md-radio v-model="wallet" value="own">Current wallet address</md-radio>
-              <md-radio v-model="wallet" value="other">Other address</md-radio>
+              <md-radio v-model="wallet" value="other" @change="recipientAddress=''">Other address</md-radio>
 
               <div class="md-layout">
                 <div class="md-layout-item md-size-50"></div>
@@ -144,8 +144,8 @@
                   href="https://compound.finance"
                 >Compound Finance</a> lending pool which means you start earning interest on your Dai immediately after a sale 🤘!
               </p>
-              <md-radio v-model="daiMode" value="dai">Dai</md-radio>
-              <md-radio v-model="daiMode" value="cdai">cDai</md-radio>
+              <md-radio v-model="daiMode" value="Dai">Dai</md-radio>
+              <md-radio v-model="daiMode" value="cDai">cDai</md-radio>
             </md-content>
           </div>
           <div class="md-layout-item">
@@ -153,14 +153,14 @@
               <md-card-header>
                 <div class="md-title">Configure commitment lock</div>
               </md-card-header>
-              <p>All too often during a bull market people will cancel their sell orders on the way up. The commitment lock places a cool down on executing a withdraw or edit of trade settings. This makes it harder to back out once you've committed to your sell prices, ensuring that your crypto gets sold at the price you selected!</p>
+              <p>All too often during a bull market people will cancel their sell orders on the way up. The commitment lock places a cool down on executing a withdraw or edit of trade settings. This makes it harder to back out once you've committed to your sell prices, ensuring that your crypto gets sold at the price you selected🔐!</p>
               <md-radio v-model="commitment" value="no">No Commitment lock</md-radio>
               <md-radio v-model="commitment" value="lock">Set lock period</md-radio>
 
               <div class="md-layout" v-if="commitment=='lock'">
                 <div class="md-layout-item md-size-40">
                   <md-field>
-                    <label>Cool down on withdraw</label>
+                    <label>Cool down on withdraw(days)</label>
                     <md-input v-model="coolDownOnWithdraw" type="number"></md-input>
                   </md-field>
                 </div>
@@ -182,7 +182,8 @@
         </div>
         <md-button
           class="md-raised md-primary"
-          @click="setDone('first', 'second'); etherToSell = etherSelectedToSell"
+          @click="setDone('first', 'second'); etherToSell = etherSelectedToSell; if(wallet=='own'){recipientAddress=account}"
+          :disabled="wallet =='other' && recipientAddress.length!=42"
           style="margin-top: 20px;"
         >Continue</md-button>
       </md-step>
@@ -199,7 +200,7 @@
               <md-card-header>
                 <div class="md-title">Sell ladder function</div>
               </md-card-header>
-              <p>Add your preferences to create an automatic market selling smart contract. Specify how much ether you want to sell, and then select the sell ladder function you want to use. Experiment and see what the sell orders will look like with the interactive graph🚀!</p>
+              <p>Add your preferences to create an automatic market selling smart contract. Specify how much ether you want to sell, and then select the sell ladder function you want to use. Experiment and see what the sell orders will look like with the interactive graph📊.</p>
             </md-content>
           </div>
         </div>
@@ -284,12 +285,12 @@
       >
         <md-content style="padding: 20px;">
           <md-card-header>
-            <div class="md-title">Review all the trades</div>
+            <div class="md-title">Review trades</div>
           </md-card-header>
           <p>The table below shows all trades that will be preformed. Note that it is possible that your upper bound in trade price will not be reached and so the cumulative values are shown to show the net values at this price point.🔍</p>
           <md-table>
             <md-table-row>
-              <md-table-head md-numeric>#</md-table-head>
+              <md-table-head md-numeric>Trade #</md-table-head>
               <md-table-head>Sell Percent</md-table-head>
               <md-table-head>Sell Price USD</md-table-head>
               <md-table-head>Sell Value USD</md-table-head>
@@ -323,8 +324,84 @@
           <md-card-header>
             <div class="md-title">Review sell contract information and deploy contract!</div>
           </md-card-header>
-          <p>Before deploying your sell contract you can review all key information. You will always be able to change these values later.</p>
+          <p>Before deploying your sell contract you can review all key information. You will always be able to change these values later, add(or remove funds) and change sale periods.</p>
         </md-content>
+        <br />
+        <div class="md-layout md-gutter">
+          <div class="md-layout-item">
+            <md-content style="padding: 20px;">
+              <md-card-header>
+                <div class="md-title">Sell contract summary information</div>
+              </md-card-header>
+              <md-table v-if="plotData!=null">
+                <md-table-row>
+                  <md-table-cell>Ether to sell</md-table-cell>
+                  <md-table-cell>Ξ {{etherToSell.toFixed(4)}}</md-table-cell>
+                </md-table-row>
+                <md-table-row>
+                  <md-table-cell>Recipient wallet</md-table-cell>
+                  <md-table-cell>
+                    <div class="md-layout">
+                      <div class="md-layout-item">
+                        <clickable-address
+                          :light="false"
+                          :eth-address="recipientAddress"
+                          style="margin-top:0px"
+                        />
+                      </div>
+                      <div class="md-layout-item">
+                        <p style="margin:0px" v-if="wallet=='own'">(my wallet)</p>
+                        <p style="margin:0px" v-if="wallet=='other'">(selected wallet)</p>
+                      </div>
+                    </div>
+                  </md-table-cell>
+                </md-table-row>
+                <md-table-row>
+                  <md-table-cell>Receive token</md-table-cell>
+                  <md-table-cell>{{daiMode}}</md-table-cell>
+                </md-table-row>
+                <md-table-row>
+                  <md-table-cell>Commitment lock</md-table-cell>
+                  <md-table-cell>
+                    <p style="margin:0px" v-if="commitment=='yes'">{{coolDownOnWithdraw}} days</p>
+                    <p style="margin:0px" v-if="commitment=='no'">None set</p>
+                  </md-table-cell>
+                </md-table-row>
+                <md-table-row>
+                  <md-table-cell>Number of trades</md-table-cell>
+                  <md-table-cell>{{this.sellStepsObject.steps.length - 1}}</md-table-cell>
+                </md-table-row>
+                <md-table-row>
+                  <md-table-cell>Start sell price</md-table-cell>
+                  <md-table-cell>$ {{this.sellStepsObject.steps[0].toFixed(2)}}</md-table-cell>
+                </md-table-row>
+                <md-table-row>
+                  <md-table-cell>Final sell price</md-table-cell>
+                  <md-table-cell>$ {{finalValues.price.toFixed(2)}}</md-table-cell>
+                </md-table-row>
+                <md-table-row>
+                  <md-table-cell>Total sold in USD</md-table-cell>
+                  <md-table-cell>$ {{finalValues.total.toFixed(2)}}</md-table-cell>
+                </md-table-row>
+                <md-table-row>
+                  <md-table-cell>Average sell USD/Eth</md-table-cell>
+                  <md-table-cell>$ {{(finalValues.total/etherToSell).toFixed(2)}}</md-table-cell>
+                </md-table-row>
+              </md-table>
+            </md-content>
+          </div>
+          <div class="md-layout-item">
+            <md-content style="padding: 20px;">
+              <md-card-header>
+                <div class="md-title">Sell ladder function</div>
+              </md-card-header>
+              <div v-if="plotData!=null && etherToSell!=0">
+                <vue-plotly :data="plotData" :layout="plotLayout" :options="plotOptions" />
+              </div>
+            </md-content>
+          </div>
+        </div>
+        <br />
         <md-button class="md-raised md-primary" @click="console.log('AAAA')">Deploy🚀!</md-button>
         <md-button class="md-raised" @click="setDone('fourth', 'third')">Back</md-button>
       </md-step>
@@ -361,10 +438,13 @@ export default {
     percentageSelected: 20,
     wallet: "own",
     recipientAddress: "0x",
-    daiMode: "dai",
+    daiMode: "Dai",
     commitment: "no",
     coolDownOnWithdraw: 5
   }),
+  mounted() {
+    // this.recipientAddress = this.account;
+  },
   methods: {
     sellSteps(steps) {
       console.log("SELL STEPS");
@@ -416,8 +496,8 @@ export default {
           dtick: 10
         },
         margin: {
-          l: 40,
-          r: 40,
+          l: 55,
+          r: 55,
           b: 55,
           t: 10,
           pad: 5
@@ -497,7 +577,12 @@ export default {
 
         cumulativePercent.unshift(0);
         tradeValue.unshift(0);
-        let xaxisSeries = this.sellStepsObject.steps;
+
+        //cast to json then back to make a deep copy. we want the xaxis to only be an extended
+        // instance of the trade values, not a pointer to the underlying.
+        let xaxisSeries = JSON.parse(
+          JSON.stringify(this.sellStepsObject.steps)
+        );
         xaxisSeries.unshift(this.usdPrice - 100);
 
         console.log("CUM");

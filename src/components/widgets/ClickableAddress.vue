@@ -9,7 +9,7 @@
       v-if="light==true"
     >{{ dotDotDot }}</a>
     <a
-      class="eth-address md-subheading"
+      class="eth-address"
       :href="buildLink"
       target="_blank"
       v-if="light==false"
