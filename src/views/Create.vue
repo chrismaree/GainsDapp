@@ -74,6 +74,8 @@
                         :interval="0.1"
                         :adsorb="true"
                         :tooltip="'always'"
+                        :process-style="{ backgroundColor: '#a78c9f' }"
+                        :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
                       />
                     </div>
                   </div>
@@ -96,6 +98,8 @@
                         :interval="0.1"
                         :adsorb="true"
                         :tooltip="'always'"
+                        :process-style="{ backgroundColor: '#a78c9f' }"
+                        :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
                       />
                     </div>
                   </div>
@@ -174,6 +178,8 @@
                     :interval="1"
                     :adsorb="true"
                     :tooltip="'always'"
+                    :process-style="{ backgroundColor: '#a78c9f' }"
+                    :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
                   />
                 </div>
               </div>

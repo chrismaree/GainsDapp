@@ -2,9 +2,8 @@
   <div class="page-container">
     <div class="md-layout md-gutter">
       <div class="md-layout-item">
-        <p>
-          <p>Specify the size of the sells at each step. Choose the price you want to start selling at, the size per step and the increase(or decrease) per step. You can also choose the number of steps In total.📈</p>
-        </p>
+        <p></p>
+        <p>Specify the size of the sells at each step. Choose the price you want to start selling at, the size per step and the increase(or decrease) per step. You can also choose the number of steps In total.📈</p>
       </div>
     </div>
 
@@ -25,6 +24,8 @@
           :adsorb="true"
           :interval="10"
           :tooltip="'always'"
+          :process-style="{ backgroundColor: '#a78c9f' }"
+          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
         />
       </div>
     </div>
@@ -44,6 +45,8 @@
           :interval="1"
           :min="2"
           :tooltip="'always'"
+          :process-style="{ backgroundColor: '#a78c9f' }"
+          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
           :max="20"
         />
       </div>
@@ -65,6 +68,8 @@
           :max="2.0"
           :adsorb="true"
           :tooltip="'always'"
+          :process-style="{ backgroundColor: '#a78c9f' }"
+          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
           :interval="0.1"
         />
       </div>
@@ -86,6 +91,8 @@
           :max="2"
           :adsorb="true"
           :tooltip="'always'"
+          :process-style="{ backgroundColor: '#a78c9f' }"
+          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
           :interval="0.1"
         />
       </div>
@@ -106,6 +113,8 @@
           :max="500"
           :adsorb="true"
           :tooltip="'always'"
+          :process-style="{ backgroundColor: '#a78c9f' }"
+          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
           :interval="10"
         />
       </div>

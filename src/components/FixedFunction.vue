@@ -2,9 +2,8 @@
   <div class="page-container">
     <div class="md-layout md-gutter">
       <div class="md-layout-item">
-        <p>
-          <p>Specify your start and end price and the number of steps you want in between. You can pick to have your sells run at a constant sale (constant in ETH) size or a constant sales return (constant in USD).⚖️</p>
-        </p>
+        <p></p>
+        <p>Specify your start and end price and the number of steps you want in between. You can pick to have your sells run at a constant sale (constant in ETH) size or a constant sales return (constant in USD).⚖️</p>
       </div>
     </div>
 
@@ -25,6 +24,8 @@
           :adsorb="true"
           :interval="50"
           :tooltip="'always'"
+          :process-style="{ backgroundColor: '#a78c9f' }"
+          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
         />
       </div>
     </div>
@@ -36,7 +37,8 @@
         </md-field>
       </div>
       <div class="md-layout-item">
-        <br /><br />
+        <br />
+        <br />
         <vue-slider
           v-model="endingPrice"
           :min="usdPrice"
@@ -44,6 +46,8 @@
           :adsorb="true"
           :interval="50"
           :tooltip="'always'"
+          :process-style="{ backgroundColor: '#a78c9f' }"
+          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
         />
       </div>
     </div>
@@ -55,13 +59,16 @@
         </md-field>
       </div>
       <div class="md-layout-item">
-        <br /><br />
+        <br />
+        <br />
         <vue-slider
           v-model="numberOfSteps"
           :adsorb="true"
           :interval="1"
           :min="2"
           :tooltip="'always'"
+          :process-style="{ backgroundColor: '#a78c9f' }"
+          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
           :max="20"
         />
       </div>
