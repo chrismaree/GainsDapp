@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Create from './views/Create.vue'
-import Manage from './views/Create.vue'
+import Manage from './views/Manage.vue'
 
 Vue.use(Router)
 

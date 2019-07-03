@@ -29,7 +29,7 @@
         </div>
         <br />
         <div class="md-layout md-gutter">
-          <div class="md-layout-item">
+          <div class="md-layout-item md-size-100 md-large-size-50">
             <md-content style="padding: 20px;">
               <md-card-header>
                 <div class="md-title">Ether to sell</div>
@@ -108,7 +108,7 @@
               </div>
             </md-content>
           </div>
-          <div class="md-layout-item">
+          <div class="md-layout-item md-size-100 md-large-size-50">
             <md-content style="padding: 20px;">
               <md-card-header>
                 <div class="md-title">Recipient Wallet</div>
