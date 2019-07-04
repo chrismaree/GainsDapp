@@ -22,7 +22,7 @@
         />
       </div>
     </div>
-    <div class="md-layout md-gutter" style="padding-top:50px">
+    <div class="md-layout md-gutter" style="padding-top:25px">
       <div class="md-layout-item text-center">
         <img class="text-center" alt="step logo" style="height:85px;" src="../assets/012-login.png" />
         <p
@@ -105,7 +105,7 @@
               />
             </div>
             <div class="md-layout-item">
-              <h3>How Moon Steps works under the hood</h3>
+              <h3>How MoonSteps.space works under the hood</h3>
               <p>Break down of the implementation details of the smart contracts and automated trading mechanism.</p>
             </div>
           </div>

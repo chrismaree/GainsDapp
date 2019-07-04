@@ -12,17 +12,17 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'MoonSteps - Home',
       component: Home
     },
     {
       path: '/create',
-      name: 'create',
+      name: 'MoonSteps - Create',
       component: Create
     },
     {
       path: '/manage',
-      name: 'manage',
+      name: 'MoonSteps - Manage',
       component: Manage
     },
   ]

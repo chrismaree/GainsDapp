@@ -250,17 +250,17 @@
           </div>
         </div>
         <div v-if="finalValues!=null">
-          <md-content style="margin-top:22px; padding:30px">
-            <div class="md-layout md-alignment-top-center md-gutter">
+          <md-content style="margin-top:22px; padding-top:20px">
+            <div class="md-layout md-gutter">
               <div class="md-layout-item">
-                <span class="md-subheading">Final sell price:${{finalValues.price.toFixed(2)}}</span>
+                <span class="md-subheading text-center">Final sell price:${{finalValues.price.toFixed(2)}}</span>
                 <br />
               </div>
               <div class="md-layout-item">
-                <span class="md-subheading">Total value sold:${{finalValues.total.toFixed(2)}}</span>
+                <span class="md-subheading text-center">Total value sold:${{finalValues.total.toFixed(2)}}</span>
                 <br />
               </div>
-              <div class="md-layout-item md-alignment-center-right">
+              <div class="md-layout-item text-center">
                 <span
                   class="md-subheading"
                 >Average USD/Eth:${{(finalValues.total/etherToSell).toFixed(2)}}</span>
@@ -599,7 +599,7 @@ export default {
             x: xaxisSeries,
             y: tradeValue,
             marker: {
-              color: "#B3BF59",
+              color: "#646B71",
               line: { color: "transparent" }
             },
             type: "bar",

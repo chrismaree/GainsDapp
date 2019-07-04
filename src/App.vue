@@ -4,7 +4,7 @@
       <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
         <md-icon>menu</md-icon>
       </md-button>
-      <span class="md-title">Home Page</span>
+      <span class="md-title">{{$route.name}}</span>
 
       <!-- <logo style="margin-left:600px"/> -->
 
@@ -69,8 +69,6 @@
     <md-app-content style="background-color: #F0F2F5">
       <router-view />
     </md-app-content>
-
-    
   </md-app>
 </template>
 
