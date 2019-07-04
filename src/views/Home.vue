@@ -18,7 +18,7 @@
           class="text-center"
           alt="step logo"
           style="height:500px;"
-          src="../assets/MoonSteps.jpg"
+          src="../assets/MoonSteps.png"
         />
       </div>
     </div>
@@ -67,13 +67,13 @@
       <div class="md-layout-item" style="padding-top:50px; padding-left:50px">
         <span class="md-display-2">Did you miss out on taking profits in the last bull run?</span>
         <p
-          style="padding-top:20px"
+          style="padding-top:5px"
         >For a lot of people this was because they did not enter the bull run with a plan on how to exit. Understanding and committing to the price you want to sell at before the markets start moving is important to not get lost in the euphoria of a bull market. Put your peg in the sand today and choose how much crypto you want to sell on the way up to lock in your profits.</p>
       </div>
 
       <div class="md-layout-item" style="padding-top:50px; padding-right:50px">
         <md-content
-          style="padding: 5px; padding-right:20px; margin-bottom: 20px; cursor: pointer;"
+          style="padding: 5px; padding-right:20px; padding-left:20px; margin-bottom: 20px; cursor: pointer;"
           md-with-hover
         >
           <div class="md-layout md-gutter">
@@ -92,7 +92,7 @@
           </div>
         </md-content>
         <md-content
-          style="padding: 5px; padding-right:20px; margin-bottom: 20px; cursor: pointer;"
+          style="padding: 5px; padding-right:20px; padding-left:20px; margin-bottom: 20px; cursor: pointer;"
           md-with-hover
         >
           <div class="md-layout md-gutter">
