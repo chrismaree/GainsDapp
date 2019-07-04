@@ -7,12 +7,15 @@ contract Exchange():
 
 owner: public(address)
 factory: public(address)
-uniswapExchange: Exchange
+uniswapDaiExchange: Exchange
+uniswapcDaiExchange: Exchange
 
-sellAmount: public(uint256[20])
+sellAmounts: public(uint256[20])
 sellPrices: public(uint256[20])
-numberOfSells: uint256
-lastSell: uint256
+numberOfSells: public(uint256)
+lastSell: public(int128)
+commitmentLock: public(timestamp)
+lastExecutedChange: public(timestamp)
 
 @public
 def __init__(_owner: address):
@@ -22,12 +25,25 @@ def __init__(_owner: address):
 
 @public
 @payable
-def setupFund(_uniswapExchange: address, _sellAmount: uint256[20], _sellPrices: uint256[20]):
+def setupFund(_uniswapDaiExchange: address, _uniswapcDaiExchange: address, _sellAmounts: uint256[20], _sellPrices: uint256[20], _commitmentLock: timestamp):
     assert msg.sender == self.owner
-    self.uniswapExchange = Exchange(_uniswapExchange)
-    self.sellAmount = _sellAmount
+    assert self.lastExecutedChange == 0
+    self.uniswapDaiExchange = Exchange(_uniswapDaiExchange)
+    self.uniswapcDaiExchange = Exchange(_uniswapcDaiExchange)
+    self.sellAmounts = _sellAmounts
     self.sellPrices = _sellPrices
+    self.lastExecutedChange = block.timestamp
+    self.commitmentLock = _commitmentLock
 
+@constant
+@public
+def getSellAmounts() -> uint256[20]:
+    return self.sellAmounts
+
+@constant
+@public
+def getSellPrices() -> uint256[20]:
+    return self.sellPrices
 
 # @public
 # def executeSell(_sellIndex: uint256):
