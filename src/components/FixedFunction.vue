@@ -24,8 +24,8 @@
           :adsorb="true"
           :interval="50"
           :tooltip="'always'"
-          :process-style="{ backgroundColor: '#a78c9f' }"
-          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
+          :process-style="{ backgroundColor: '#798288' }"
+          :tooltip-style="{ backgroundColor: '#646B71', borderColor: '#646B71' }"
         />
       </div>
     </div>
@@ -46,8 +46,8 @@
           :adsorb="true"
           :interval="50"
           :tooltip="'always'"
-          :process-style="{ backgroundColor: '#a78c9f' }"
-          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
+          :process-style="{ backgroundColor: '#798288' }"
+          :tooltip-style="{ backgroundColor: '#646B71', borderColor: '#646B71' }"
         />
       </div>
     </div>
@@ -67,8 +67,8 @@
           :interval="1"
           :min="2"
           :tooltip="'always'"
-          :process-style="{ backgroundColor: '#a78c9f' }"
-          :tooltip-style="{ backgroundColor: '#7e496e', borderColor: '#7e496e' }"
+          :process-style="{ backgroundColor: '#798288' }"
+          :tooltip-style="{ backgroundColor: '#646B71', borderColor: '#646B71' }"
           :max="20"
         />
       </div>

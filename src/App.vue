@@ -18,7 +18,7 @@
           </div>
           <div class="md-layout-item">
             <div class="md-subheading">
-              <clickable-address :light="true" :eth-address="account"/>
+              <clickable-address :light="true" :eth-address="account" />
             </div>
           </div>
         </div>
@@ -31,58 +31,47 @@
       <md-list>
         <md-list-item>
           <md-icon>home</md-icon>
-          <span class="md-list-item-text"><router-link to="/">Home</router-link></span>
+          <span class="md-list-item-text">
+            <router-link to="/">Home</router-link>
+          </span>
         </md-list-item>
 
         <md-list-item>
           <md-icon>create</md-icon>
-          <span class="md-list-item-text"><router-link to="/create">Create Sell Contract</router-link></span>
+          <span class="md-list-item-text">
+            <router-link to="/create">Create Sell Contract</router-link>
+          </span>
         </md-list-item>
 
         <md-list-item>
           <md-icon>inbox</md-icon>
-          <span class="md-list-item-text"><router-link to="/manage">Manage Sell Contracts</router-link></span>
+          <span class="md-list-item-text">
+            <router-link to="/manage">Manage Sell Contracts</router-link>
+          </span>
         </md-list-item>
 
         <md-list-item>
           <md-icon>code</md-icon>
-          <span class="md-list-item-text"><a href="https://github.com/constantiam/snap" target="__blank"> Github</a></span>
+          <span class="md-list-item-text">
+            <a href="https://github.com/constantiam/snap" target="__blank">Github</a>
+          </span>
         </md-list-item>
 
         <md-list-item>
           <md-icon>chat</md-icon>
-          <span class="md-list-item-text"><a href="https://github.com/constantiam/snap" target="__blank"> Telegram</a></span>
+          <span class="md-list-item-text">
+            <a href="https://github.com/constantiam/snap" target="__blank">Telegram</a>
+          </span>
         </md-list-item>
       </md-list>
     </md-app-drawer>
 
     <md-app-content style="background-color: #F0F2F5">
-      <router-view/>
+      <router-view />
     </md-app-content>
+
+    
   </md-app>
-
-  <!-- <div id="app">
-    <div id="nav">
-      <div class="md-layout">
-        <div class="md-layout-item">
-          <div class="md-subheading">
-            <clickable-address :eth-address="account"/>
-          </div>
-        </div>
-        <div class="md-layout-item">
-          <a class="md-title">
-            <router-link to="/">⚖️ Constantiam</router-link>
-          </a>
-        </div>
-        <div class="md-layout-item">
-          <div class="md-subheading">{{currentNetwork}}</div>
-        </div>
-      </div>
-
-      <hr>
-    </div>
-    <router-view/>
-  </div>-->
 </template>
 
 <script>
@@ -164,9 +153,9 @@ export default {
 @include md-register-theme(
   "default",
   (
-    primary: #7e496e,
+    primary: #646b71,
     // The primary color of your brand
-      accent: #a78c9f // The secondary color of your brand
+      accent: #798288 // The secondary color of your brand
   )
 );
 
@@ -179,17 +168,24 @@ body {
 
 #app {
   /* text-align: center; */
-  color: #2c3e50;
+  color: #454a50;
   // margin-top: 10px;
 }
 
 #app {
   font-family: "Space Mono", sans-serif;
 }
- nav li:hover,
- nav li.router-link-active,
- nav li.router-link-exact-active {
-   background-color: indianred;
-   cursor: pointer;
- }
+nav li:hover,
+nav li.router-link-active,
+nav li.router-link-exact-active {
+  background-color: indianred;
+  cursor: pointer;
+}
+
+.text-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
 </style>
