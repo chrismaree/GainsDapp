@@ -101,7 +101,7 @@ contract("gainsbot_fund", (accounts) => {
         console.log("Dai exchange ETH balance price per eth in dai:", currentEthPrice.toString())
 
         //deploy the fund
-        fund = await Fund.new(owner, {
+        fund = await Fund.new(owner, daiExchangeAddress, daiExchangeAddress, {
             from: fundFactory
         });
     })
@@ -119,35 +119,44 @@ contract("gainsbot_fund", (accounts) => {
 
                 let lastSell = await fund.lastSell()
                 assert.equal(lastSell, -1, "did not correctly assign lastSell to -1");
+
+                let _uniswapDaiExchange = await fund.uniswapDaiExchange()
+                assert.equal(_uniswapDaiExchange, uniswapDaiExchange.address, "did not correctly assign uniswapDaiExchange");
+
+                let _uniswapcDaiExchange = await fund.uniswapcDaiExchange()
+                assert.equal(_uniswapcDaiExchange, uniswapDaiExchange.address, "did not correctly assign uniswapDaiExchange");
             });
         })
         context("Fund setup", function () {
                 it("should correctly assign provided parameters to sell contract", async () => {
                     // sell 1000 wei at each step
-                    let _sellAmounts = Array(20).fill(null).map((u, i) => 1000)
+                    let _sellAmounts = Array(20).fill(null).map((u, i) => web3.utils.toWei("0.1", 'ether'))
                     // make the sell prices 110, 120, 130...210. Ether start price from uniswap is 100
-                    let _sellPrices = Array(20).fill(null).map((u, i) => 110 + i * 10)
+                    let _sellPrices = Array(20).fill(null).map((u, i) => web3.utils.toWei((110 + i * 10).toString(), 'ether'))
                     let _commitmentLock = 0
-                    await fund.setupFund(daiExchangeAddress, daiExchangeAddress, _sellAmounts, _sellPrices, _commitmentLock, {
+                    await fund.setupFund(owner, _sellAmounts, _sellPrices, 20, _commitmentLock, false, {
                         from: owner
                     })
 
                     let sellAmount = await fund.getSellAmounts()
-                    sellAmountProcessed = sellAmount.map(x => x.toNumber())
+                    sellAmountProcessed = sellAmount.map(x => x.toString())
                     assert.equal(JSON.stringify(sellAmountProcessed), JSON.stringify(_sellAmounts), "did not correctly assign sellAmount");
 
                     let sellPrice = await fund.getSellPrices()
-                    sellPriceProcessed = sellPrice.map(x => x.toNumber())
+                    sellPriceProcessed = sellPrice.map(x => x.toString())
                     assert.equal(JSON.stringify(sellPriceProcessed), JSON.stringify(_sellPrices), "did not correctly assign sellPrices");
 
                     let commitmentLock = await fund.commitmentLock()
                     assert.equal(commitmentLock, 0, "did not correctly set commitment lock")
+
+                    let sellToCDai = await fund.sellToCDai()
+                    assert.equal(sellToCDai, false, "did not correctly set sell to cDai to false")
                 })
                 it("should revert if not called by fund owner", async () => {
                     let sellAmounts = Array(20).fill(null).map((u, i) => 1000)
                     let sellPrices = Array(20).fill(null).map((u, i) => 110 + i * 10)
                     let commitmentLock = 0
-                    await assertRevert(fund.setupFund(daiExchangeAddress, daiExchangeAddress, sellAmounts, sellPrices, commitmentLock, {
+                    await assertRevert(fund.setupFund(owner, sellAmounts, sellPrices, 20, commitmentLock, false, {
                         from: randomAddress
                     }), EVMRevert);
                 })
@@ -155,7 +164,7 @@ contract("gainsbot_fund", (accounts) => {
                     let sellAmounts = Array(20).fill(null).map((u, i) => 1000)
                     let sellPrices = Array(20).fill(null).map((u, i) => 110 + i * 10)
                     let commitmentLock = 0
-                    await assertRevert(fund.setupFund(daiExchangeAddress, daiExchangeAddress, sellAmounts, sellPrices, commitmentLock, {
+                    await assertRevert(fund.setupFund(owner, sellAmounts, sellPrices, 20, commitmentLock, false, {
                         from: owner
                     }), EVMRevert);
                 })
@@ -167,5 +176,30 @@ contract("gainsbot_fund", (accounts) => {
                     assert.equal("100000000000000000000", currentPriceInAtto.toString(), "price not set to 10^18 Atto per eth")
                 })
             })
+        context("Trade Execution", function () {
+            it("should revert if price below trade target", async () => {
+                //starting sell price is 110 USD per ether as defined when deploying the contract.
+                //begining Ether price in uniswap is 100 ether. Should revert as the price is below the defined sell price
+                await assertRevert(fund.executeTrade.call(0), EVMRevert)
+            })
+            it("should correctly exchange Ether for Dai at sell price", async () => {
+                //Start by preforming an exchange within the uniswap pool to shift the ether price such that
+                //we are in alighment with the first trade amount. To do this we will add 50 dai to the pool.
+                //This should be enough to push the price per ether above 110 USD. 
+
+                await uniswapDaiExchange.tokenToEthSwapInput(web3.utils.toWei("50", 'ether'), 1, deadline, {
+                    from: tokenOwner
+                })
+                let ethBalance = await web3.eth.getBalance(uniswapDaiExchange.address)
+                let tokenBalance = await daiTokenContract.balanceOf(uniswapDaiExchange.address)
+                let currentEthPrice = tokenBalance / ethBalance
+                //we want the price per ether to be larger than 110. This trade above makes it ~110.1
+
+                assert.equal(currentEthPrice > 110, true, "price of ether did not change correctly")
+
+                //We should now be able to preform the trade and check that the balances changed correctly.
+                await fund.executeTrade.call(0)
+            })
+        })
     })
 });

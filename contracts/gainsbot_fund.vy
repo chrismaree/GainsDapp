@@ -1,8 +1,6 @@
 #An instance of this contract is deployed for each user. It stores all ether and interacts
 #with uniswap to preform trades. Trades are initalized by relayers who are sent back the gass
-#used in executing the trades.
-
-from vyper.interfaces import ERC20
+#used in executing the trades. Current price of ether is pulled from the uniswap pool
 
 contract Factory():
     def getExchange(token_addr: address) -> address: constant
@@ -19,38 +17,45 @@ contract Token():
 
 owner: public(address)
 factory: public(address)
+recipient: public(address)
 
-uniswapDaiExchange: Exchange
-uniswapcDaiExchange: Exchange
+uniswapDaiExchange: public(Exchange)
+uniswapcDaiExchange: public(Exchange)
 
 daiTokenContract: public(Token)
 
 sellAmounts: public(uint256[20])
 sellPrices: public(uint256[20])
-numberOfSells: public(uint256)
+numberOfSells: public(int128)
 lastSell: public(int128)
+sellToCDai: public(bool)
 
 commitmentLock: public(timestamp)
 lastExecutedChange: public(timestamp)
 
 @public
-def __init__(_owner: address):
+def __init__(_owner: address, _uniswapDaiExchange: address, _uniswapcDaiExchange: address):
+    self.uniswapDaiExchange = Exchange(_uniswapDaiExchange)
+    self.daiTokenContract = Token(self.uniswapDaiExchange.tokenAddress())
+    self.uniswapcDaiExchange = Exchange(_uniswapcDaiExchange)
+
     self.owner = _owner
     self.factory = msg.sender
     self.lastSell = -1
 
 @public
 @payable
-def setupFund(_uniswapDaiExchange: address, _uniswapcDaiExchange: address, _sellAmounts: uint256[20], _sellPrices: uint256[20], _commitmentLock: timestamp):
+def setupFund(_tradeRecipient: address, _sellAmounts: uint256[20], _sellPrices: uint256[20], _numberOfSells: int128, _commitmentLock: timestamp, _sellToCDai: bool):
     assert msg.sender == self.owner
     assert self.lastExecutedChange == 0
-    self.uniswapDaiExchange = Exchange(_uniswapDaiExchange)
-    self.daiTokenContract = Token(self.uniswapDaiExchange.tokenAddress())
-    self.uniswapcDaiExchange = Exchange(_uniswapcDaiExchange)
+    assert _numberOfSells <= 20  
+    
     self.sellAmounts = _sellAmounts
     self.sellPrices = _sellPrices
     self.lastExecutedChange = block.timestamp
+    self.numberOfSells = _numberOfSells
     self.commitmentLock = _commitmentLock
+    self.sellToCDai = _sellToCDai
 
 @constant
 @public
@@ -69,3 +74,10 @@ def getEtherPrice() -> uint256:
     exchangeEtherBalance: uint256(wei) = self.uniswapDaiExchange.balance
     exchangeEtherBalanceUint: uint256 = as_unitless_number(exchangeEtherBalance)
     return (exchangeTokenBalance*10**18) / exchangeEtherBalanceUint
+
+@public
+def executeTrade(_tradeIndex: int128) -> bool:
+    assert _tradeIndex < self.numberOfSells - 1
+    assert self.getEtherPrice() > self.sellPrices[_tradeIndex]
+
+    return True
