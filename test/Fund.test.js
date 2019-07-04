@@ -44,7 +44,6 @@ contract("gainsbot_fund", (accounts) => {
     const daiReserve = web3.utils.toWei("1000", 'ether')
     const daiSupply = web3.utils.toWei("10000", 'ether')
 
-
     before(async function () {
         //start by creating a template contract
         uniswapExchangeTemplate = await UniSwapExchange.new({
@@ -107,10 +106,7 @@ contract("gainsbot_fund", (accounts) => {
         });
     })
 
-    beforeEach(async function () {
-
-
-    })
+    beforeEach(async function () {})
     describe("Fund Sell Contract", function () {
         context("Deployment and Configuration", function () {
             it("should correctly deploy and set owner", async () => {
@@ -126,43 +122,50 @@ contract("gainsbot_fund", (accounts) => {
             });
         })
         context("Fund setup", function () {
-            it("should correctly assign provided parameters to sell contract", async () => {
-                // sell 1000 wei at each step
-                let _sellAmounts = Array(20).fill(null).map((u, i) => 1000)
-                // make the sell prices 110, 120, 130...210. Ether start price from uniswap is 100
-                let _sellPrices = Array(20).fill(null).map((u, i) => 110 + i * 10)
-                let _commitmentLock = 0
-                await fund.setupFund(daiExchangeAddress, daiExchangeAddress, _sellAmounts, _sellPrices, _commitmentLock, {
-                    from: owner
+                it("should correctly assign provided parameters to sell contract", async () => {
+                    // sell 1000 wei at each step
+                    let _sellAmounts = Array(20).fill(null).map((u, i) => 1000)
+                    // make the sell prices 110, 120, 130...210. Ether start price from uniswap is 100
+                    let _sellPrices = Array(20).fill(null).map((u, i) => 110 + i * 10)
+                    let _commitmentLock = 0
+                    await fund.setupFund(daiExchangeAddress, daiExchangeAddress, _sellAmounts, _sellPrices, _commitmentLock, {
+                        from: owner
+                    })
+
+                    let sellAmount = await fund.getSellAmounts()
+                    sellAmountProcessed = sellAmount.map(x => x.toNumber())
+                    assert.equal(JSON.stringify(sellAmountProcessed), JSON.stringify(_sellAmounts), "did not correctly assign sellAmount");
+
+                    let sellPrice = await fund.getSellPrices()
+                    sellPriceProcessed = sellPrice.map(x => x.toNumber())
+                    assert.equal(JSON.stringify(sellPriceProcessed), JSON.stringify(_sellPrices), "did not correctly assign sellPrices");
+
+                    let commitmentLock = await fund.commitmentLock()
+                    assert.equal(commitmentLock, 0, "did not correctly set commitment lock")
                 })
-
-                let sellAmount = await fund.getSellAmounts()
-                sellAmountProcessed = sellAmount.map(x => x.toNumber())
-                assert.equal(JSON.stringify(sellAmountProcessed), JSON.stringify(_sellAmounts), "did not correctly assign sellAmount");
-
-                let sellPrice = await fund.getSellPrices()
-                sellPriceProcessed = sellPrice.map(x => x.toNumber())
-                assert.equal(JSON.stringify(sellPriceProcessed), JSON.stringify(_sellPrices), "did not correctly assign sellPrices");
-
-                let commitmentLock = await fund.commitmentLock()
-                assert.equal(commitmentLock, 0, "did not correctly set commitment lock")
+                it("should revert if not called by fund owner", async () => {
+                    let sellAmounts = Array(20).fill(null).map((u, i) => 1000)
+                    let sellPrices = Array(20).fill(null).map((u, i) => 110 + i * 10)
+                    let commitmentLock = 0
+                    await assertRevert(fund.setupFund(daiExchangeAddress, daiExchangeAddress, sellAmounts, sellPrices, commitmentLock, {
+                        from: randomAddress
+                    }), EVMRevert);
+                })
+                it("should revert if already set up", async () => {
+                    let sellAmounts = Array(20).fill(null).map((u, i) => 1000)
+                    let sellPrices = Array(20).fill(null).map((u, i) => 110 + i * 10)
+                    let commitmentLock = 0
+                    await assertRevert(fund.setupFund(daiExchangeAddress, daiExchangeAddress, sellAmounts, sellPrices, commitmentLock, {
+                        from: owner
+                    }), EVMRevert);
+                })
+            }),
+            context("Fund helpers", function () {
+                it("should correctly calculate current Ether price in Uniswap exchange", async () => {
+                    let currentPriceInAtto = await fund.getEtherPrice()
+                    //starting price in ether should be 100 usd (dai) per ether. This is equal to 100*10^18 atto
+                    assert.equal("100000000000000000000", currentPriceInAtto.toString(), "price not set to 10^18 Atto per eth")
+                })
             })
-            it("should revert if not called by fund owner", async () => {
-                let sellAmounts = Array(20).fill(null).map((u, i) => 1000)
-                let sellPrices = Array(20).fill(null).map((u, i) => 110 + i * 10)
-                let commitmentLock = 0
-                await assertRevert(fund.setupFund(daiExchangeAddress, daiExchangeAddress, sellAmounts, sellPrices, commitmentLock, {
-                    from: randomAddress
-                }), EVMRevert);
-            })
-            it("should revert if already set up", async () => {
-                let sellAmounts = Array(20).fill(null).map((u, i) => 1000)
-                let sellPrices = Array(20).fill(null).map((u, i) => 110 + i * 10)
-                let commitmentLock = 0
-                await assertRevert(fund.setupFund(daiExchangeAddress, daiExchangeAddress, sellAmounts, sellPrices, commitmentLock, {
-                    from: owner
-                }), EVMRevert);
-            })
-        })
     })
 });
