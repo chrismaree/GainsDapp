@@ -1,3 +1,4 @@
+
 #An instance of this contract is deployed for each user. It stores all ether and interacts
 #with uniswap to preform trades. Trades are initalized by relayers who are sent back the gass
 #used in executing the trades. Current price of ether is pulled from the uniswap pool
@@ -45,11 +46,12 @@ def __init__(_owner: address, _uniswapDaiExchange: address, _uniswapcDaiExchange
 
 @public
 @payable
-def setupFund(_tradeRecipient: address, _sellAmounts: uint256[20], _sellPrices: uint256[20], _numberOfSells: int128, _commitmentLock: timestamp, _sellToCDai: bool):
+def setupFund(_recipient: address, _sellAmounts: uint256[20], _sellPrices: uint256[20], _numberOfSells: int128, _commitmentLock: timestamp, _sellToCDai: bool):
     assert msg.sender == self.owner
     assert self.lastExecutedChange == 0
     assert _numberOfSells <= 20  
     
+    self.recipient = _recipient
     self.sellAmounts = _sellAmounts
     self.sellPrices = _sellPrices
     self.lastExecutedChange = block.timestamp
@@ -76,8 +78,10 @@ def getEtherPrice() -> uint256:
     return (exchangeTokenBalance*10**18) / exchangeEtherBalanceUint
 
 @public
-def executeTrade(_tradeIndex: int128) -> bool:
+def executeTrade(_tradeIndex: int128) -> uint256:
     assert _tradeIndex < self.numberOfSells - 1
     assert self.getEtherPrice() > self.sellPrices[_tradeIndex]
 
-    return True
+    return self.uniswapDaiExchange.ethToTokenTransferInput(1, block.timestamp + 10, self.recipient, value = self.sellAmounts[_tradeIndex])
+    
+    

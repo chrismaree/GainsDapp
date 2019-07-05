@@ -100,7 +100,7 @@ contract("gainsbot_fund", (accounts) => {
         currentEthPrice = tokenBalance / ethBalance
         console.log("Dai exchange ETH balance price per eth in dai:", currentEthPrice.toString())
 
-        //deploy the fund
+        //deploy the fund. We add 2 ether to it that we will sell over a range of prices
         fund = await Fund.new(owner, daiExchangeAddress, daiExchangeAddress, {
             from: fundFactory
         });
@@ -135,7 +135,8 @@ contract("gainsbot_fund", (accounts) => {
                     let _sellPrices = Array(20).fill(null).map((u, i) => web3.utils.toWei((110 + i * 10).toString(), 'ether'))
                     let _commitmentLock = 0
                     await fund.setupFund(owner, _sellAmounts, _sellPrices, 20, _commitmentLock, false, {
-                        from: owner
+                        from: owner,
+                        value: web3.utils.toWei("2", 'ether')
                     })
 
                     let sellAmount = await fund.getSellAmounts()
@@ -198,7 +199,8 @@ contract("gainsbot_fund", (accounts) => {
                 assert.equal(currentEthPrice > 110, true, "price of ether did not change correctly")
 
                 //We should now be able to preform the trade and check that the balances changed correctly.
-                await fund.executeTrade.call(0)
+                value = await fund.executeTrade.call(0)
+                console.log(value.toString())
             })
         })
     })
