@@ -22,56 +22,74 @@
         />
       </div>
     </div>
-    <div class="md-layout md-gutter" style="padding-top:25px">
-      <div class="md-layout-item text-center">
-        <img class="text-center" alt="step logo" style="height:85px;" src="../assets/012-login.png" />
-        <p
-          class="text-center"
-        >Securely store your crypto in a smart contract until selling. Funds are sent directly back to you so you can send directly to hardware wallet.</p>
+    <md-content style="padding-top:100px; padding-bottom:50px">
+      <div class="md-layout md-gutter" style="padding-top:25px">
+        <div class="md-layout-item md-size-20 md-medium-hide" />
+        <div class="md-layout-item md-small-size-100">
+          <img
+            class="text-center"
+            alt="step logo"
+            style="height:85px;"
+            src="../assets/013-shield.png"
+          />
+          <p
+            class="text-center"
+          >Securely store your crypto in a smart contract until selling. Funds are sent directly back to you so you can send directly to hardware wallet.</p>
+        </div>
+        <div class="md-layout-item md-small-size-100">
+          <img
+            class="text-center"
+            alt="step logo"
+            style="height:85px;"
+            src="../assets/019-budget.png"
+          />
+          <p
+            class="text-center"
+          >Automatically calculate all sell steps and amounts between now and your target price making exiting easier and safer. Understand your exact exact returns upfront.</p>
+        </div>
+        <div class="md-layout-item md-size-20 md-medium-hide" />
       </div>
-      <div class="md-layout-item">
-        <img
-          class="text-center"
-          alt="step logo"
-          style="height:85px;"
-          src="../assets/007-arithmetic.png"
-        />
-        <p
-          class="text-center"
-        >Automatically calculate all sell steps and amounts between now and your target price making exiting easier and safer. Understand your exact exact returns upfront.</p>
+      <div class="md-layout md-gutter" style="padding-top:25px">
+        <div class="md-layout-item md-size-20 md-medium-hide" />
+        <div class="md-layout-item md-small-size-100">
+          <img
+            class="text-center"
+            alt="step logo"
+            style="height:85px;"
+            src="../assets/015-blockchain.png"
+          />
+          <p
+            class="text-center"
+          >Deploy and forget about it. All trades happens automatically for free through your smart contract that trades with decentralized exchanges on your behalf.</p>
+        </div>
+        <div class="md-layout-item md-small-size-100">
+          <img
+            class="text-center"
+            alt="step logo"
+            style="height:85px;"
+            src="../assets/016-coins.png"
+          />
+          <p
+            class="text-center"
+          >Sell your Ether into Dai or cDai automatically over your chosen sell range. Start earning interest on your realized profits immediately.</p>
+        </div>
+        <div class="md-layout-item md-size-20 md-medium-hide" />
       </div>
-      <div class="md-layout-item">
-        <img
-          class="text-center"
-          alt="step logo"
-          style="height:85px;"
-          src="../assets/008-ethereum.png"
-        />
-        <p
-          class="text-center"
-        >Deploy and forget about it. All trades happens automatically for free through your smart contract that trades with decentralized exchanges on your behalf.</p>
-      </div>
-      <div class="md-layout-item">
-        <img
-          class="text-center"
-          alt="step logo"
-          style="height:85px;"
-          src="../assets/005-rising.png"
-        />
-        <p
-          class="text-center"
-        >Sell your Ether into Dai or cDai automatically over your chosen sell range. Start earning interest on your realized profits immediately.</p>
-      </div>
-    </div>
+    </md-content>
     <div class="md-layout md-gutter">
-      <div class="md-layout-item" style="padding-top:50px; padding-left:50px">
+      <div class="md-layout-item md-size-20 md-medium-hide" />
+      <div class="md-layout-item" style="padding-top:50px;">
         <span class="md-display-2">Did you miss out on taking profits in the last bull run?</span>
         <p
           style="padding-top:5px"
         >For a lot of people this was because they did not enter the bull run with a plan on how to exit. Understanding and committing to the price you want to sell at before the markets start moving is important to not get lost in the euphoria of a bull market. Put your peg in the sand today and choose how much crypto you want to sell on the way up to lock in your profits.</p>
       </div>
+      <div class="md-layout-item md-size-20 md-medium-hide" />
+    </div>
+    <div class="md-layout md-gutter">
+      <div class="md-layout-item md-size-20 md-medium-hide" />
 
-      <div class="md-layout-item" style="padding-top:50px; padding-right:50px">
+      <div class="md-layout-item" style="padding-top:50px;">
         <md-content
           style="padding: 5px; padding-right:20px; padding-left:20px; margin-bottom: 20px; cursor: pointer;"
           md-with-hover
@@ -82,7 +100,7 @@
                 class="text-center"
                 alt="step logo"
                 style="height:60px;margin-top:25px"
-                src="../assets/005-rising.png"
+                src="../assets/017-business-and-finance.png"
               />
             </div>
             <div class="md-layout-item">
@@ -101,7 +119,7 @@
                 class="text-center"
                 alt="step logo"
                 style="height:60px;margin-top:25px"
-                src="../assets/003-rocket.png"
+                src="../assets/018-rocket-1.png"
               />
             </div>
             <div class="md-layout-item">
@@ -111,6 +129,7 @@
           </div>
         </md-content>
       </div>
+      <div class="md-layout-item md-size-20 md-medium-hide" />
     </div>
   </div>
 </template>

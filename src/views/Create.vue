@@ -29,7 +29,7 @@
         </div>
         <br />
         <div class="md-layout md-gutter">
-          <div class="md-layout-item md-size-100 md-large-size-50">
+          <div class="md-layout-item">
             <md-content style="padding: 20px;">
               <md-card-header>
                 <div class="md-title">Ether to sell</div>
@@ -108,7 +108,7 @@
               </div>
             </md-content>
           </div>
-          <div class="md-layout-item md-size-100 md-large-size-50">
+          <div class="md-layout-item">
             <md-content style="padding: 20px;">
               <md-card-header>
                 <div class="md-title">Recipient Wallet</div>
@@ -253,11 +253,15 @@
           <md-content style="margin-top:22px; padding-top:20px">
             <div class="md-layout md-gutter">
               <div class="md-layout-item">
-                <span class="md-subheading text-center">Final sell price:${{finalValues.price.toFixed(2)}}</span>
+                <span
+                  class="md-subheading text-center"
+                >Final sell price:${{finalValues.price.toFixed(2)}}</span>
                 <br />
               </div>
               <div class="md-layout-item">
-                <span class="md-subheading text-center">Total value sold:${{finalValues.total.toFixed(2)}}</span>
+                <span
+                  class="md-subheading text-center"
+                >Total value sold:${{finalValues.total.toFixed(2)}}</span>
                 <br />
               </div>
               <div class="md-layout-item text-center">
@@ -432,7 +436,11 @@ export default {
     etherSelectedToSell: 5,
     etherToSell: 5,
     sellStepsObject: {},
-    plotOptions: { responsive: true, showLink: false, displayModeBar: false },
+    plotOptions: {
+      responsive: true,
+      showLink: false,
+      displayModeBar: false
+    },
     mode: "pick",
     active: "first",
     first: false,
