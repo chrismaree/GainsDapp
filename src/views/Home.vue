@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div class="md-layout md-gutter">
+    <div class="md-layout md-gutter" style="padding-bottom:50px">
       <div class="md-layout-item" style="padding-top:100px; padding-left:150px">
         <span class="md-display-3">Secure your profits in the next bull run</span>
         <p style="padding-top:20px">
@@ -10,19 +10,18 @@
           <br />
           <br />
           <md-button class="md-raised md-primary" @click="goToBegin" style="margin-top:25px">Begin</md-button>
-          <md-button class="md-raised" @click="goToCreate" style="margin-top:25px">Learn More</md-button>
         </p>
       </div>
       <div class="md-layout-item md-size-40">
         <img
           class="text-center"
           alt="step logo"
-          style="height:500px;"
+          style="width:200px;"
           src="../assets/MoonSteps.png"
         />
       </div>
     </div>
-    <md-content style="padding-top:100px; padding-bottom:50px">
+    <md-content style="padding:20px">
       <div class="md-layout md-gutter" style="padding-top:25px">
         <div class="md-layout-item md-size-20 md-medium-hide" />
         <div class="md-layout-item md-small-size-100">
@@ -105,7 +104,7 @@
             </div>
             <div class="md-layout-item">
               <h3>Importance of taking profits during a bull run</h3>
-              <p>Sitting on the sidelines just hodling is not always the best strategy. At some point you need to realize your gains.</p>
+              <p>Sitting on the sidelines just hodling is not always the best strategy. At some point you need to realize your gains. This post looks at the important of profit taking.</p>
             </div>
           </div>
         </md-content>
@@ -124,7 +123,7 @@
             </div>
             <div class="md-layout-item">
               <h3>How MoonSteps.space works under the hood</h3>
-              <p>Break down of the implementation details of the smart contracts and automated trading mechanism.</p>
+              <p>This post breaks down of the implementation details of the smart contracts and automated trading mechanism use to create MoonSteps.</p>
             </div>
           </div>
         </md-content>
@@ -140,7 +139,7 @@ export default {
   name: "home",
   methods: {
     goToBegin() {
-      router.push({ name: "create" });
+      router.push({ name: "MoonSteps - Create" });
     }
   }
 };

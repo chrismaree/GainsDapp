@@ -412,11 +412,14 @@
           </div>
         </div>
         <br />
-        <md-button class="md-raised md-primary" @click="console.log('AAAA')">Deploy🚀!</md-button>
+        <md-button class="md-raised md-primary" @click="showLaunch = true">Deploy🚀</md-button>
         <md-button class="md-raised" @click="setDone('fourth', 'third')">Back</md-button>
       </md-step>
     </md-steppers>
-
+    <md-dialog-alert
+      :md-active.sync="showLaunch"
+      md-title="Sell contract creation is disabled for now..."
+      md-content="We are working hard to finish up testing the smart contracts to enable launching your own sell contracts. " />
     <br />
   </div>
 </template>
@@ -433,6 +436,7 @@ export default {
   name: "create",
   components: { ClickableAddress, CustomFunction, FixedFunction, VuePlotly },
   data: () => ({
+    showLaunch: false,
     etherSelectedToSell: 5,
     etherToSell: 5,
     sellStepsObject: {},
